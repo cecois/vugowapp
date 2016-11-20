@@ -1,0 +1,17 @@
+/*#navContainer{
+    background-color:#9D161B;
+  }
+
+#navContainer ul li.navitem a {
+    color: black;
+    text-shadow: 0 0 7px gray;
+}
+
+  .navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
+
+  	background-color:#a74048;
+  }*/
+
+  .ribbon-gold{
+  	background-color: #9d161b;
+  }
