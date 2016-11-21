@@ -395,7 +395,8 @@ var QueryView = Backbone.View.extend({
 		"mouseover li": "lighten",
 		"mouseout li": "darken",
 		"click .hit-title": "activate",
-		"click .toolbar-hitz-zoom": "zoom",
+		"click .toolbar-hitz-zoom": "zoomall",
+		"click .toolbar-hit-trigger.icon-girl-footprint": "zoom",
 		"click .toolbar-hitz-hide": "hide"
 	},
 	initialize: function() {
@@ -420,7 +421,7 @@ var QueryView = Backbone.View.extend({
 		return this
 
 	},
-	zoom: function(e) {
+	zoomall: function(e) {
 
 		qarea = 0;
 		groupHITZ.eachLayer(function(l) {
@@ -447,6 +448,22 @@ var QueryView = Backbone.View.extend({
 		appState.set({
 			active: (appState.get("active") == did) ? null : did
 		}) 
+
+		return this
+
+	},
+	zoom: function(e){
+
+		var did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
+
+		var am = quHz.findWhere({_id:did});
+
+		console.log("am:")
+		console.log(am)
+
+		var amboundz = LLGOD.boundsFromBBOX(am.get("bbox_west")+','+am.get("bbox_south")+','+am.get("bbox_east")+','+am.get("bbox_north"))
+
+		map.fitBounds(amboundz)
 
 		return this
 
@@ -485,37 +502,37 @@ var QueryView = Backbone.View.extend({
 				if (L.toGeoJSON().features[0].properties.did == d_d) {
 					L.setStyle(LLGOD.get_style("hithover"))
 				}
-				
+
 			})}
 
 
 
-		return this
+			return this
 
-	},
-	unrender: function() {
+		},
+		unrender: function() {
 
-		$('#triageContainer').addClass('hidden')
-		$(this.el).addClass('hidden')
+			$('#triageContainer').addClass('hidden')
+			$(this.el).addClass('hidden')
 
-		return this
-
-
-	},
-	choose: function(e) {
+			return this
 
 
-		var typ = $(e.currentTarget).find("span").attr("data-id")
-		var target = $(e.currentTarget).find("span").attr("data-target")
-		var bbox = $(e.currentTarget).find("span").attr("data-bbox")
+		},
+		choose: function(e) {
 
-		this.unrender()
 
-		var arr = {
-			type: typ,
-			"target": target,
-			"fallback": bbox
-		}
+			var typ = $(e.currentTarget).find("span").attr("data-id")
+			var target = $(e.currentTarget).find("span").attr("data-target")
+			var bbox = $(e.currentTarget).find("span").attr("data-bbox")
+
+			this.unrender()
+
+			var arr = {
+				type: typ,
+				"target": target,
+				"fallback": bbox
+			}
 
 		// appActivity.set({message:"processing AOI (area of interest) as : "+arr.target})
 
