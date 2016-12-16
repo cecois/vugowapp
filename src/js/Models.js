@@ -200,6 +200,18 @@ var Activity = Backbone.Model.extend({
 	}
 });
 
+var Preev = Backbone.Model.extend({
+	defaults: {
+		gurl:null,
+		gtyp:null
+	},
+	url: function(){
+			// here's a chance to mutate/sniff the thing
+			return this.gurl
+		}
+
+	});
+
 var Console = Backbone.Model.extend({
 
 	defaults:{message:"Hi, I'm Console. The 'z' key will toggle the main pane."}

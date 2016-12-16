@@ -54,6 +54,122 @@ var AOIMenuView = Backbone.View.extend({
 
 });
 
+var PreeView = Backbone.View.extend({
+	el:null,
+	events:{},
+	initialize: function() {
+		this.listenTo(this.model, 'change', this.render);
+		return this
+	},
+	subrender_esri_arcgis: function(){
+
+		var floormax = 100
+		var mrc = 1000
+		var gurl=this.model.get("gurl")+"/0"
+		var gtyp=this.model.get("gtyp")
+		var esr = L.esri.featureLayer({precision:1,fields:['FID', 'type', 'title'],url: gurl.replace("http:", "https:"),simplifyFactor:100 })
+		.on("loading",function(){
+			var msg = "Attempting to render an [over]simplified sample";
+			appActivity.set({message:msg})
+		})
+		.once("load",function(gtyp){
+			var msg="testing result..."
+			appActivity.set({message:msg})
+			if(_.keys(groupPREEV.getLayers()[0]._layers)<=0){
+				var msg = "No features :-/ The original server is probably fine though."
+				appActivity.set({message:msg})
+
+			} else {
+				var msg = "check the map for sample features"
+				appActivity.set({message:msg,hangtime:6,hang:true})
+			}
+		})
+		.addTo(groupPREEV)
+
+		return this
+	},
+	subrender_wms: function(){
+
+		var gurl=this.model.get("gurl").split("?")[0]
+		var gtyp=this.model.get("gtyp")
+
+		var msg = "chopped url to "+gurl
+		console.log(msg)
+		appActivity.set({message:msg})
+
+		var wmsl = L.tileLayer.wms("http://services.azgs.az.gov/ArcGIS/services/OneGeology/AZGS_HIGS_Geology/MapServer/WMSServer", {
+			layers: 'US-HI_HIGS_250k_Lithology',
+			format: 'image/png',
+			transparent: true,
+			attribution: "fake attrib"
+		}).addTo(groupPREEV)
+		
+
+		return this
+	},
+	render: function(){
+
+		groupPREEV.clearLayers()
+		var gt = this.model.get("gtyp")
+
+		switch(gt) {
+			case "esri rest":
+			return this.subrender_esri_rest()
+			break;
+			case "arcgis feature service":
+			return this.subrender_esri_arcgis()
+			break;
+			case "geojson":
+			return this.subrender_geojson()
+			break;
+			case "json":
+			return this.subrender_json()
+			break;
+			case "kmz":
+			return this.subrender_kmz()
+			break;
+			case "wcs":
+			return this.subrender_wcs()
+			break;
+			case "wfs":
+			return this.subrender_wfs()
+			break;
+			case "wms":
+			return this.subrender_wms()
+			break;
+			case "xml":
+			return this.subrender_xml()
+			break;
+			default:
+			return this.subrender_unrenderable()
+		} 
+
+		// .addTo(groupPREEV)
+
+
+		// if(typeof esr._activeCells!=="undefined"){
+		// 	console.log("84")
+		// 	// appActivity.set({message:"84 "+this.model.get("gtyp")})
+		// } else {
+		// 	appActivity.set({message:"...failed, nudging the url and trying again..."})
+		// 	max = 10
+		// 	esr = L.esri.featureLayer({url: this.model.url().replace("http:", "https:"),where:"OBJECTID<="+max,timeout: 5000  })
+		// 	.addTo(groupPREEV).on("loading",function(){
+		// 		appActivity.set({message:"attempting render of sample "+max+ "features from server type "+this.model.get("gtyp")})
+		// 	}).on("loaded",function(){
+		// 		appActivity.set({message:"rendered sample "+max+ "features"})
+		// 	})
+
+		// }
+
+
+		map.fitBounds(groupPREEV.getBounds());
+
+		return this
+	}
+
+});
+
 var DownloadExtentView = Backbone.View.extend({
 
 	el: null,
@@ -191,9 +307,6 @@ var ActiveView = Backbone.View.extend({
 			_id: appState.get("active")
 		})
 
-		console.log("am:");
-		console.log(am);
-
 		if (appState.get("active") == null) {
 			return this.stfu()
 		} else {
@@ -230,6 +343,9 @@ var ActiveView = Backbone.View.extend({
 
 			$(this.el).removeClass('down')
 		}
+
+		// also zoom to it
+		quQueryView.zoom(appState.get("active"))
 
 		return this
 	}
@@ -348,9 +464,6 @@ var QueryMap = Backbone.View.extend({
 					})
 					.addTo(groupHITZ)
 
-					console.log("g:")
-					console.log(gjo)
-
 			// snap the map to the extent of the whole group (not easy!)
 			// map.fitBounds(L.geoJson(turf.bboxPolygon(qbbox)).getBounds())
 
@@ -397,6 +510,8 @@ var QueryView = Backbone.View.extend({
 		"click .hit-title": "activate",
 		"click .toolbar-hitz-zoom": "zoomall",
 		"click .toolbar-hit-trigger.icon-girl-footprint": "zoom",
+		"click .toolbar-hit-trigger.icon-target": "download",
+		"click .toolbar-hit-trigger.icon-eye": "preview",
 		"click .toolbar-hitz-hide": "hide"
 	},
 	initialize: function() {
@@ -423,54 +538,82 @@ var QueryView = Backbone.View.extend({
 	},
 	zoomall: function(e) {
 
-		qarea = 0;
-		groupHITZ.eachLayer(function(l) {
+//its hard to underscore leaflet groups so we iterate a little first
+var westens=[]
+var suds=[]
+var easties=[]
+var nordz=[]
+groupHITZ.eachLayer(function(l) {
 
-			var bbox = LLGOD.boundsArrFromBBOX(l.getBounds().toBBoxString())
+	var b = l.getBounds();
 
-			var poly = turf.bboxPolygon(bbox);
+	westens.push(b.getWest())
+	suds.push(b.getSouth())
+	easties.push(b.getEast())
+	nordz.push(b.getNorth())
 
-			var area = turf.area(poly);
+});
 
-			if (area > qarea) {
-				qarea = area
-				map.fitBounds(LLGOD.boundsFromBBOX(l.getBounds().toBBoxString()))
-			}
+map.fitBounds([[_.max(nordz),_.min(westens)],[_.min(suds),_.max(easties)]])
 
-		});
+return this
+},
+activate: function(e){
 
-		return this
-	},
-	activate: function(e){
+	var did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
 
-		var did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
+	appState.set({
+		active: (appState.get("active") == did) ? null : did
+	}) 
 
-		appState.set({
-			active: (appState.get("active") == did) ? null : did
-		}) 
+	return this
+
+},
+preview: function(e){
+
+
+
+	did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
+	var am = quHz.findWhere({_id:did});
+	
+	appActivity.set({message:"sniffing format..."})
+	var grt = am.get("geo_render_type")
+	// var grt = (am.get("geo_render_type")!=='undefined')?am.get("geo_render_type"):null;
+
+	// if(grt==null){
+	// 	appActivity.set({hang:true,message:"no web-renderable format"})} else {
+		// appActivity.set({message:"attempting render where renderable format = "+grt})
+		appPreev.set({gurl:am.get("geo_render_url"),gtyp:am.get("geo_render_type")});
+		// }
 
 		return this
 
 	},
 	zoom: function(e){
 
-		var did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
+		var did = null
+		if(typeof e == 'object'){
 
-		var am = quHz.findWhere({_id:did});
+			did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')} else {
+				did = e;
+			}
 
-		console.log("am:")
-		console.log(am)
+			console.log(did)
 
-		var amboundz = LLGOD.boundsFromBBOX(am.get("bbox_west")+','+am.get("bbox_south")+','+am.get("bbox_east")+','+am.get("bbox_north"))
+			var am = quHz.findWhere({_id:did});
 
-		map.fitBounds(amboundz)
+			if(typeof am !== 'undefined'){
+				var amboundz = LLGOD.boundsFromBBOX(am.get("bbox_west")+','+am.get("bbox_south")+','+am.get("bbox_east")+','+am.get("bbox_north"))
 
-		return this
+				map.fitBounds(amboundz)
+// if am
+}
+return this
 
-	},
-	darken: function(e) {
+},
+darken: function(e) {
 
-		var d_d = $(e.currentTarget).attr("data-id")
+	var d_d = $(e.currentTarget).attr("data-id")
 
 		// $(e.currentTarget).find(".hit-title").removeClass("hit-hover")
 		$(e.currentTarget).removeClass("hit-hover")
@@ -629,13 +772,21 @@ var ActivityView = Backbone.View.extend({
 		this.model.bind("change", this.render, this);
 		// this.render();
 	},
-	stfu: function() {
+	stfu: function(hang) {
 		NProgress.done()
 		$(this.el).addClass("idle")
 			// $("#inputSearch").removeClass("hidden")
-			$("#activityWrapper").addClass('hidden')
 
-			$(this.el).removeClass('warn')
+			if(hang=="hang"){
+				// default hangtime of n seconds
+				var ht = (this.model.get("hangtime")>0)?this.model.get("hangtime"):5;
+				setTimeout(function(){$("#activityWrapper").addClass('hidden')}, ht*1000)
+			} else {
+				$("#activityWrapper").addClass('hidden')
+
+				$(this.el).removeClass('warn')
+			}
+
 
 
 			return this
@@ -666,10 +817,13 @@ var ActivityView = Backbone.View.extend({
 				this.model.toJSON()
 				))
 
-			return this
+			if(this.model.get("hang")==true){
+				return this.stfu("hang")
+			} else {
+				return this}
 
-		}
-	});
+			}
+		});
 
 var AOIMapView = Backbone.View.extend({
 	el: null,

@@ -9,19 +9,21 @@
 </ul>
 <ul class="list-unstyled ul-hitz-split">{{#each rows}}
 	<li class="hit-wrapper pull-left col-sm-12 {{#if active}}hit-marked{{/if}}"  data-id="{{_id}}" data-bbox="{{boundingbox}}" data-target="" >
-		<div class="row col-sm-12">
-				<div class="hit-title">{{this.title}}</div>
+		<div class="row col-sm-9">
+			<div class="hit-title">{{this.title}}</div>
 		</div>
 
-<ul class="toolbar-hit list-unstyled list-inline col-sm-12">
-<li class="pull-right toolbar-hit-trigger icon-girl-footprint "></li>
-<li class="pull-right toolbar-hit-trigger icon-grid "></li>
-{{!-- <li class="pull-right toolbar-hit-trigger icon-read-more "></li> --}}
-		<!-- <li class="pull-right toolbar-hit-trigger glyphicon glyphicon-ok {{#if active}}hit-marked{{/if}}"></li> -->
-<li class="pull-right toolbar-hit-trigger icon-awesome-download"></li>
-<li class="pull-right toolbar-hit-trigger icon-eye"></li>
+		<ul class="toolbar-hit list-unstyled list-inline col-sm-3">
+			<li class="pull-right toolbar-hit-trigger icon-girl-footprint "></li>
+<!-- TRIGGERS COVERAGE ENVELOPES WHEN CONFIGURED
+	<li class="pull-right toolbar-hit-trigger icon-grid "></li> -->
+	<!-- <li class="pull-right toolbar-hit-trigger icon-read-more "></li> -->
+	<!-- <li class="pull-right toolbar-hit-trigger glyphicon glyphicon-ok {{#if active}}hit-marked{{/if}}"></li> -->
+	<!-- <li class="pull-right toolbar-hit-trigger icon-awesome-download"></li> -->
+	<li class="pull-right toolbar-hit-trigger icon-eye"></li>
+	<li class="pull-right toolbar-hit-trigger icon-target"></li>
 </ul>
 
-	</li>
-	{{/each}}
+</li>
+{{/each}}
 </ul>

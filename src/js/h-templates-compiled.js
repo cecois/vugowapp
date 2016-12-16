@@ -658,12 +658,12 @@ templates['QueryViewSplitTpl'] = template({"1":function(depth0,helpers,partials,
     + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
     + "\" data-bbox=\""
     + escapeExpression(((helper = (helper = helpers.boundingbox || (depth0 != null ? depth0.boundingbox : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"boundingbox","hash":{},"data":data}) : helper)))
-    + "\" data-target=\"\" >\n		<div class=\"row col-sm-12\">\n				<div class=\"hit-title\">"
+    + "\" data-target=\"\" >\n		<div class=\"row col-sm-9\">\n			<div class=\"hit-title\">"
     + escapeExpression(lambda((depth0 != null ? depth0.title : depth0), depth0))
-    + "</div>\n		</div>\n\n<ul class=\"toolbar-hit list-unstyled list-inline col-sm-12\">\n<li class=\"pull-right toolbar-hit-trigger icon-girl-footprint \"></li>\n<li class=\"pull-right toolbar-hit-trigger icon-grid \"></li>\n		<!-- <li class=\"pull-right toolbar-hit-trigger glyphicon glyphicon-ok ";
+    + "</div>\n		</div>\n\n		<ul class=\"toolbar-hit list-unstyled list-inline col-sm-3\">\n			<li class=\"pull-right toolbar-hit-trigger icon-girl-footprint \"></li>\n<!-- TRIGGERS COVERAGE ENVELOPES WHEN CONFIGURED\n	<li class=\"pull-right toolbar-hit-trigger icon-grid \"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger icon-read-more \"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger glyphicon glyphicon-ok ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.active : depth0), {"name":"if","hash":{},"fn":this.program(2, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "\"></li> -->\n<li class=\"pull-right toolbar-hit-trigger icon-awesome-download\"></li>\n<li class=\"pull-right toolbar-hit-trigger icon-eye\"></li>\n</ul>\n\n	</li>\n";
+  return buffer + "\"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger icon-awesome-download\"></li> -->\n	<li class=\"pull-right toolbar-hit-trigger icon-eye\"></li>\n	<li class=\"pull-right toolbar-hit-trigger icon-target\"></li>\n</ul>\n\n</li>\n";
 },"2":function(depth0,helpers,partials,data) {
   return "hit-marked";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
