@@ -241,6 +241,18 @@ templates['DlexSwitcherTpl'] = template({"1":function(depth0,helpers,partials,da
   if (stack1 != null) { buffer += stack1; }
   return buffer + " />\n</div>\n";
 },"useData":true});
+templates['DlexToggleTpl'] = template({"1":function(depth0,helpers,partials,data) {
+  return "glyphicon-remove-circle off";
+  },"3":function(depth0,helpers,partials,data) {
+  return "glyphicon-check on";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helperMissing=helpers.helperMissing, buffer = "<ul id=\"\" class=\"dlex-toggle col-sm-12\">\n	<li class=\"col-sm-11 pull-left\">Downloads Clip to Current Map Extent:</li>\n	<li style=\"text-align:left;\" class=\"dlex-toggle-switch col-sm-1 glyphicon ";
+  stack1 = ((helpers.equal || (depth0 && depth0.equal) || helperMissing).call(depth0, (depth0 != null ? depth0.clip : depth0), 0, {"name":"equal","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data}));
+  if (stack1 != null) { buffer += stack1; }
+  stack1 = ((helpers.equal || (depth0 && depth0.equal) || helperMissing).call(depth0, (depth0 != null ? depth0.clip : depth0), 1, {"name":"equal","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data}));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "\"></li>\n</ul>";
+},"useData":true});
 templates['downloadObjectViewTpl'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "<!-- <li class=\"span1\"> -->\n"
@@ -660,14 +672,14 @@ templates['QueryViewSplitTpl'] = template({"1":function(depth0,helpers,partials,
     + escapeExpression(((helper = (helper = helpers.boundingbox || (depth0 != null ? depth0.boundingbox : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"boundingbox","hash":{},"data":data}) : helper)))
     + "\" data-target=\"\" >\n		<div class=\"row col-sm-9\">\n			<div class=\"hit-title\">"
     + escapeExpression(lambda((depth0 != null ? depth0.title : depth0), depth0))
-    + "</div>\n		</div>\n\n		<ul class=\"toolbar-hit list-unstyled list-inline col-sm-3\">\n			<li class=\"pull-right toolbar-hit-trigger icon-girl-footprint \"></li>\n<!-- TRIGGERS COVERAGE ENVELOPES WHEN CONFIGURED\n	<li class=\"pull-right toolbar-hit-trigger icon-grid \"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger icon-read-more \"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger glyphicon glyphicon-ok ";
+    + "</div>\n		</div>\n\n		<ul class=\"toolbar-hit list-unstyled list-inline col-sm-3\">\n			<li class=\"pull-right toolbar-hit-trigger toolbar-hit-trigger-extent icon-girl-footprint \"></li>\n<!-- TRIGGERS COVERAGE ENVELOPES WHEN CONFIGURED\n	<li class=\"pull-right toolbar-hit-trigger icon-grid \"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger icon-read-more \"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger glyphicon glyphicon-ok ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.active : depth0), {"name":"if","hash":{},"fn":this.program(2, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "\"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger icon-awesome-download\"></li> -->\n	<li class=\"pull-right toolbar-hit-trigger icon-eye\"></li>\n	<li class=\"pull-right toolbar-hit-trigger icon-target\"></li>\n</ul>\n\n</li>\n";
+  return buffer + "\"></li> -->\n	<!-- <li class=\"pull-right toolbar-hit-trigger icon-awesome-download\"></li> -->\n	<li class=\"pull-right toolbar-hit-trigger toolbar-hit-trigger-preview icon-eye\"></li>\n	<li class=\"pull-right toolbar-hit-trigger toolbar-hit-trigger-download glyphicon glyphicon-download-alt\"></li>\n</ul>\n\n</li>\n";
 },"2":function(depth0,helpers,partials,data) {
   return "hit-marked";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "<h4>"
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "\n<h4>"
     + escapeExpression(lambda((depth0 != null ? depth0.title : depth0), depth0))
     + "</h4>\n<ul class=\"toolbar-hitz list-inline list-unstyled col-sm-12\">\n	<li class=\"col-sm-5\"></li>\n	<li class=\"col-sm-1 toolbar-hitz-trigger toolbar-hitz-zoom glyphicon glyphicon-fullscreen\"></li>\n	<li class=\"col-sm-1 toolbar-hitz-trigger toolbar-hitz-hide glyphicon glyphicon-ban-circle\"></li>\n	<li class=\"col-sm-5\"></li>\n</ul>\n<ul class=\"list-unstyled ul-hitz-split\">";
   stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.rows : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});

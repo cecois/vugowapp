@@ -1,12 +1,15 @@
 var DownloadExtent = Backbone.Model.extend({
 	defaults: {
-		"geom": null,
+		"bbox": null,
+		"clip":1
 		// "type": null
 	},
 	initialize: function() {
+
+		this.set({bbox:map.getBounds().toBBoxString()})
 		// this.listenTo(triagePlace,"change","update")
 		// this.listenTo(appState,"change:bbox","update")
-		// this.listenTo(map,"move","update")
+		// this.listenTo(this,"change","update")
 		// this.listenTo(appAOI, 'change:geojson', this.update);
 		// map.on('moveend', this.update());
 
@@ -20,30 +23,19 @@ var DownloadExtent = Backbone.Model.extend({
 	},
 	update: function(){
 
-		if(appAOI.get("pre").type=="aoi_nom"){
-// if(groupAOI.getLayers().length>0){
-	this.set({message:"Downloads will be clipped to the rectangular extent of "+appAOI.get("display_name").split(",")[0],geom:turf.bboxPolygon(LLGOD.boundsArrFromBBOX(groupAOI.getBounds().toBBoxString()))})
+		if(this.get("clip")==1){
+			console.log("clip is 1")
+			// this.set({bbox:map.getBounds().toBBoxString()})
+		} else {
+			console.log("clip is NOT 1")
+			this.set({bbox:"-180,-90,180,90"})
 
-} else {
+		}
 
-	if(appAOI.geojson.geometry.type=="Point"){
-		console.log("at 30, settin message to point")
-		this.set({message:"Downloads will be clipped to a "+POINTBUFFER+"m buffer around the point",geom:turf.bboxPolygon(LLGOD.boundsArrFromBBOX(appAOI.get("pre").fallback))})
-	} else {
 
-		console.log("at 34, settin message to map")
-		this.set({message:"Downloads will be clipped to the visible map extent",geom:turf.bboxPolygon(LLGOD.boundsArrFromBBOX(map.getBounds().toBBoxString()))})
+		return this
 
 	}
-
-}
-
-console.log("dlex.geom:")
-console.log(this.get("geom"))
-
-return this
-
-}
 
 
 }); //dlex
@@ -78,7 +70,7 @@ var Query = Backbone.Model.extend({
 	},
 	get_filter_query: function() {
 
-		var bounds = LLGOD.boundsFromBBOX(appState.get("bbox"))
+		var bounds = UTIL.boundsFromBBOX(appState.get("bbox"))
 
 		var bbox_west = bounds.getWest()
 		var bbox_south = bounds.getSouth()
@@ -123,7 +115,7 @@ var Query = Backbone.Model.extend({
 		// we want one vector that boosts based on
 		var fakeArea = this.get_earth_factor();
 
-		var bounds = LLGOD.boundsFromBBOX(appState.get("bbox"))
+		var bounds = UTIL.boundsFromBBOX(appState.get("bbox"))
 
 		var bbox_west = bounds.getWest()
 		var bbox_south = bounds.getSouth()
@@ -154,7 +146,7 @@ var Query = Backbone.Model.extend({
 		// we want one vector that boosts based on
 		var fakeArea = this.get_earth_factor();
 
-		var bounds = LLGOD.boundsFromBBOX(appState.get("bbox"))
+		var bounds = UTIL.boundsFromBBOX(appState.get("bbox"))
 
 		var bbox_west = bounds.getWest()
 		var bbox_south = bounds.getSouth()
@@ -170,9 +162,22 @@ var Query = Backbone.Model.extend({
 		return spatial
 
 	},
+	oef: function(f,l){
+
+		var popupContent = "<strong>" +f.properties.name + "</strong>";
+
+		if (f.properties && f.properties.popupContent) {
+			popupContent += f.properties.popupContent;
+		}
+
+		l.bindPopup(popupContent);
+
+		return this
+
+	},
 	get_earth_factor: function() {
 
-		var bounds = LLGOD.boundsFromBBOX(appState.get("bbox"))
+		var bounds = UTIL.boundsFromBBOX(appState.get("bbox"))
 
 		var bbox_west = bounds.getWest()
 		var bbox_south = bounds.getSouth()
@@ -203,7 +208,7 @@ var Activity = Backbone.Model.extend({
 var Preev = Backbone.Model.extend({
 	defaults: {
 		gurl:null,
-		gtyp:null
+		gso:null
 	},
 	url: function(){
 			// here's a chance to mutate/sniff the thing
@@ -464,7 +469,7 @@ var State = Backbone.Model.extend({
 		var bbox = this.get("bbox")
 
 // if(typeof appState.changed.bbox !== 'undefined'){
-	map.fitBounds(LLGOD.boundsFromBBOX(bbox))
+	map.fitBounds(UTIL.boundsFromBBOX(bbox))
 // }
 
 return this

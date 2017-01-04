@@ -61,85 +61,155 @@ var PreeView = Backbone.View.extend({
 		this.listenTo(this.model, 'change', this.render);
 		return this
 	},
-	subrender_esri_arcgis: function(){
+	// subrender_esri_arcgis: function(){
 
-		var floormax = 100
-		var mrc = 1000
-		var gurl=this.model.get("gurl")+"/0"
-		var gtyp=this.model.get("gtyp")
-		var esr = L.esri.featureLayer({precision:1,fields:['FID', 'type', 'title'],url: gurl.replace("http:", "https:"),simplifyFactor:100 })
-		.on("loading",function(){
-			var msg = "Attempting to render an [over]simplified sample";
-			appActivity.set({message:msg})
-		})
-		.once("load",function(gtyp){
-			var msg="testing result..."
-			appActivity.set({message:msg})
-			if(_.keys(groupPREEV.getLayers()[0]._layers)<=0){
-				var msg = "No features :-/ The original server is probably fine though."
-				appActivity.set({message:msg})
+	// 	var floormax = 100
+	// 	var mrc = 1000
+	// 	var gurl=this.model.get("gurl")+"/0"
+	// 	var gtyp=this.model.get("gtyp")
+	// 	var esr = L.esri.featureLayer({precision:1,fields:['FID', 'type', 'title'],url: gurl.replace("http:", "https:"),simplifyFactor:100 })
+	// 	.on("loading",function(){
+	// 		var msg = "Attempting to render an [over]simplified sample";
+	// 		appActivity.set({message:msg})
+	// 	})
+	// 	.once("load",function(gtyp){
+	// 		var msg="testing result..."
+	// 		appActivity.set({message:msg})
+	// 		if(_.keys(groupPREEV.getLayers()[0]._layers)<=0){
+	// 			var msg = "No features :-/ The original server is probably fine though."
+	// 			appActivity.set({message:msg})
 
-			} else {
-				var msg = "check the map for sample features"
-				appActivity.set({message:msg,hangtime:6,hang:true})
+	// 		} else {
+	// 			var msg = "check the map for sample features"
+	// 			appActivity.set({message:msg,hangtime:6,hang:true})
+	// 		}
+	// 	})
+	// 	.addTo(groupPREEV)
+
+	// 	return this
+	// },
+	// subrender_wms: function(){
+
+	// 	var gurl=this.model.get("gurl").split("?")[0]
+	// 	var gtyp=this.model.get("gtyp")
+
+	// 	var msg = "chopped url to "+gurl
+	// 	console.log(msg)
+	// 	appActivity.set({message:msg})
+
+	// 	var wmsl = L.tileLayer.wms("http://services.azgs.az.gov/ArcGIS/services/OneGeology/AZGS_HIGS_Geology/MapServer/WMSServer", {
+	// 		layers: 'US-HI_HIGS_250k_Lithology',
+	// 		format: 'image/png',
+	// 		transparent: true,
+	// 		attribution: "fake attrib"
+	// 	}).addTo(groupPREEV)
+
+
+	// 	return this
+	// },
+	subrender_carto: function(){
+
+		var gurl=this.model.get("gurl")
+
+		var G = null;
+		if(MODE=="bus"){
+			$.getJSON("js/fake-carto.json",function(g){
+
+				L.geoJSON(g, {
+					style:UTIL.get_style(),
+					filter: function (feature, layer) {
+						if (feature.properties) {
+				// If the property "underConstruction" exists and is true, return false (don't render features under construction)
+				return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
 			}
-		})
-		.addTo(groupPREEV)
+			return false;
+		},
 
-		return this
-	},
-	subrender_wms: function(){
+		onEachFeature: UTIL.oef()
+	}).addTo(groupPREEV);
+			})
+		} else {
+			var sql = new cartodb.SQL({ user: 'cecmcgee' });
 
-		var gurl=this.model.get("gurl").split("?")[0]
-		var gtyp=this.model.get("gtyp")
+			sql.execute("SELECT * FROM spatialtrack_point WHERE cartodb_id > {{id}}", { id: 3 },{format:"GeoJSON"})
+			.done(function(data) {    
 
-		var msg = "chopped url to "+gurl
-		console.log(msg)
-		appActivity.set({message:msg})
+				console.log("data in done of sql:")
+				console.log(data);
 
-		var wmsl = L.tileLayer.wms("http://services.azgs.az.gov/ArcGIS/services/OneGeology/AZGS_HIGS_Geology/MapServer/WMSServer", {
-			layers: 'US-HI_HIGS_250k_Lithology',
-			format: 'image/png',
-			transparent: true,
-			attribution: "fake attrib"
-		}).addTo(groupPREEV)
+				L.geoJSON(data, {
+					style:UTIL.get_style(),
+					filter: function (feature, layer) {
+						if (feature.properties) {
+				// If the property "underConstruction" exists and is true, return false (don't render features under construction)
+				return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
+			}
+			return false;
+		},
+
+		onEachFeature: UTIL.oef()
+	}).addTo(groupPREEV);
+
+				return data.rows;
+			})
+			.error(function(errors) {    
+  // errors contains a list of errors
+  console.log("errors:" + errors);  })
+		}
+
+		// function onEachFeature(feature, layer) {
+		// 	var popupContent = "<p>I'm " +feature.properties.name + "</p>";
+
+		// 	if (feature.properties && feature.properties.popupContent) {
+		// 		popupContent += feature.properties.popupContent;
+		// 	}
+
+		// 	layer.bindPopup(popupContent);
+		// }
+
+		// map.setView([39.74739, -105], 13);	
+		map.fitBounds(groupPREEV.getBounds());
 		
+
 
 		return this
 	},
 	render: function(){
 
 		groupPREEV.clearLayers()
-		var gt = this.model.get("gtyp")
+		var gt = this.model.get("gso")
 
 		switch(gt) {
-			case "esri rest":
-			return this.subrender_esri_rest()
+			case "carto":
+			return this.subrender_carto()
 			break;
-			case "arcgis feature service":
-			return this.subrender_esri_arcgis()
-			break;
-			case "geojson":
-			return this.subrender_geojson()
-			break;
-			case "json":
-			return this.subrender_json()
-			break;
-			case "kmz":
-			return this.subrender_kmz()
-			break;
-			case "wcs":
-			return this.subrender_wcs()
-			break;
-			case "wfs":
-			return this.subrender_wfs()
-			break;
-			case "wms":
-			return this.subrender_wms()
-			break;
-			case "xml":
-			return this.subrender_xml()
-			break;
+			// case "esri rest":
+			// return this.subrender_esri_rest()
+			// break;
+			// case "arcgis feature service":
+			// return this.subrender_esri_arcgis()
+			// break;
+			// case "geojson":
+			// return this.subrender_geojson()
+			// break;
+			// case "json":
+			// return this.subrender_json()
+			// break;
+			// case "kmz":
+			// return this.subrender_kmz()
+			// break;
+			// case "wcs":
+			// return this.subrender_wcs()
+			// break;
+			// case "wfs":
+			// return this.subrender_wfs()
+			// break;
+			// case "wms":
+			// return this.subrender_wms()
+			// break;
+			// case "xml":
+			// return this.subrender_xml()
+			// break;
 			default:
 			return this.subrender_unrenderable()
 		} 
@@ -179,25 +249,39 @@ var DownloadExtentView = Backbone.View.extend({
 
 
 		// this.listenTo(this.collection, 'sync', this.render);
-		this.listenTo(this.model, 'change', this.render);
+		this.listenTo(this.model, 'change', this.update);
 
 
 		return this
 			// .render()
 
 		},
-		render: function() {
+		update: function(){
+
+
+			if(this.get("clip")==1){
+				console.log("clip is 1")
+			// this.set({bbox:map.getBounds().toBBoxString()})
+		} else {
+			console.log("clip is NOT 1")
+			this.set({bbox:"-180,-90,180,90"})
+
+		}
+
+		return this.render()
+	},
+	render: function() {
 
 
 
-			groupDLEX.clearLayers()
+		groupDLEX.clearLayers()
 
 
 
-		var rstyle = LLGOD.get_style("dlex") //pull the aoi style from our universal utility model
+		var rstyle = UTIL.get_style("dlex") //pull the aoi style from our universal utility model
 
-
-		var geojson = this.model.get("geom")
+// if we r gunna use this we'll need to convert bbox to geojson
+var geojson = this.model.get(turf.bboxPolygon(Util.boundsArrFromBBOX("bbox")))
 
 // if we have a single point coming in, we can't clip a download to it, so we're buffering by 500 meters
 if (geojson.type == "Point") {
@@ -416,7 +500,7 @@ var QueryMap = Backbone.View.extend({
 
 			// console.log("m in each of render:"); console.log(m);
 
-			var rstyle = (m.get("_id") == appState.get("active")) ? LLGOD.get_style("active") : LLGOD.get_style("hit")
+			var rstyle = (m.get("_id") == appState.get("active")) ? UTIL.get_style("active") : UTIL.get_style("hit")
 
 
 
@@ -435,7 +519,7 @@ var QueryMap = Backbone.View.extend({
 					console.log("did"+did)
 							// $(".hit-wrapper[data-id='" + did + "']").find(".hit-title").addClass("hit-hover")
 							$(".hit-wrapper[data-id='" + did + "']").addClass("hit-hover")
-							g.layer.setStyle(LLGOD.get_style("hithover"))
+							g.layer.setStyle(UTIL.get_style("hithover"))
 						}
 
 					}).on("mouseout", function(g) {
@@ -446,13 +530,13 @@ var QueryMap = Backbone.View.extend({
 							// $(".hit-wrapper[data-id='" + did + "']>.hit-title").removeClass("hit-hover")
 							// $(".hit-wrapper[data-id='" + did + "']").find(".hit-title").removeClass("hit-hover")
 							$(".hit-wrapper[data-id='" + did + "']").removeClass("hit-hover")
-							g.layer.setStyle(LLGOD.get_style("hit"))
+							g.layer.setStyle(UTIL.get_style("hit"))
 						}
 
 					})
 					.on("click", function(g) {
 						var did = g.layer.feature.properties.did
-						// g.layer.setStyle(LLGOD.get_style("active"))
+						// g.layer.setStyle(UTIL.get_style("active"))
 						// appState.set({
 						// 	ahit: did
 						// })
@@ -479,7 +563,7 @@ var QueryMap = Backbone.View.extend({
 			"name": switchername,
 			type: "hitz",
 			label: "Search Results",
-			style: LLGOD.get_style("hit")
+			style: UTIL.get_style("hit")
 
 		}
 		if (this.length > 0) {
@@ -509,9 +593,9 @@ var QueryView = Backbone.View.extend({
 		"mouseout li": "darken",
 		"click .hit-title": "activate",
 		"click .toolbar-hitz-zoom": "zoomall",
-		"click .toolbar-hit-trigger.icon-girl-footprint": "zoom",
-		"click .toolbar-hit-trigger.icon-target": "download",
-		"click .toolbar-hit-trigger.icon-eye": "preview",
+		"click .toolbar-hit-trigger.toolbar-hit-trigger-extent": "zoom",
+		"click .toolbar-hit-trigger.toolbar-hit-trigger-download": "download_triage",
+		"click .toolbar-hit-trigger.toolbar-hit-trigger-preview": "preview",
 		"click .toolbar-hitz-hide": "hide"
 	},
 	initialize: function() {
@@ -577,35 +661,59 @@ preview: function(e){
 	var am = quHz.findWhere({_id:did});
 	
 	appActivity.set({message:"sniffing format..."})
-	var grt = am.get("geo_render_type")
+	// var grt = am.get("geo_render_type")
 	// var grt = (am.get("geo_render_type")!=='undefined')?am.get("geo_render_type"):null;
 
 	// if(grt==null){
 	// 	appActivity.set({hang:true,message:"no web-renderable format"})} else {
 		// appActivity.set({message:"attempting render where renderable format = "+grt})
-		appPreev.set({gurl:am.get("geo_render_url"),gtyp:am.get("geo_render_type")});
+		appPreev.set({gurl:am.get("geo_render_url"),gso:am.get("geo_source")});
 		// }
 
 		return this
 
 	},
-	zoom: function(e){
+	download_triage: function(e){
 
-		var did = null
-		if(typeof e == 'object'){
 
-			did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')} else {
-				did = e;
-			}
 
-			console.log(did)
+		did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
+		var am = quHz.findWhere({_id:did});
 
-			var am = quHz.findWhere({_id:did});
+		appActivity.set({message:"sniffing source &amp; format..."})
 
-			if(typeof am !== 'undefined'){
-				var amboundz = LLGOD.boundsFromBBOX(am.get("bbox_west")+','+am.get("bbox_south")+','+am.get("bbox_east")+','+am.get("bbox_north"))
+// here's future switch for raster or other sources w/ different APIs
+if(am.get("geo_source")=="carto"){
+	return this.download_carto(am)
+} else {
+	return this
+}
 
-				map.fitBounds(amboundz)
+},
+download_carto(m){
+
+	console.log("in dl_carto, gunna dl this:")
+	console.log(m);
+
+	return this
+},
+zoom: function(e){
+
+	var did = null
+	if(typeof e == 'object'){
+
+		did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')} else {
+			did = e;
+		}
+
+		console.log(did)
+
+		var am = quHz.findWhere({_id:did});
+
+		if(typeof am !== 'undefined'){
+			var amboundz = UTIL.boundsFromBBOX(am.get("bbox_west")+','+am.get("bbox_south")+','+am.get("bbox_east")+','+am.get("bbox_north"))
+
+			map.fitBounds(amboundz)
 // if am
 }
 return this
@@ -625,10 +733,10 @@ darken: function(e) {
 
 
 				if (appState.get("active") == d_d) {
-					L.setStyle(LLGOD.get_style("active"))
+					L.setStyle(UTIL.get_style("active"))
 				} else {
 
-					L.setStyle(LLGOD.get_style("hit"))
+					L.setStyle(UTIL.get_style("hit"))
 				}
 			}
 
@@ -643,7 +751,7 @@ darken: function(e) {
 			$(e.currentTarget).addClass("hit-hover")
 			groupHITZ.eachLayer(function(L) {
 				if (L.toGeoJSON().features[0].properties.did == d_d) {
-					L.setStyle(LLGOD.get_style("hithover"))
+					L.setStyle(UTIL.get_style("hithover"))
 				}
 
 			})}
@@ -863,7 +971,7 @@ var AOIMapView = Backbone.View.extend({
 		if (this.model.get("boundingbox")) {
 
 			appState.set({
-				bbox: LLGOD.boundstringFromNOMIN(this.model.get("boundingbox"))
+				bbox: UTIL.boundstringFromNOMIN(this.model.get("boundingbox"))
 			});
 		} else {
 			appConsole.set({
@@ -872,7 +980,7 @@ var AOIMapView = Backbone.View.extend({
 		}
 
 
-		var rstyle = LLGOD.get_style("aoi") //pull the aoi style from our universal utility model
+		var rstyle = UTIL.get_style("aoi") //pull the aoi style from our universal utility model
 
 		// var moptions = {
 		// 	radius: 18,
@@ -1212,18 +1320,18 @@ return this
 			triagePlaces.reset()
 
 			// TEMPORARY DISABLED SO WE DON'T HIT NOMINATIM TOO HARD DURING TESTING
+			if(Config.MODE!=="bus"){
+				$.getJSON(service_url, null, function(response) {
+					$.each(response, function(i, element) {
+						var llgodelement = element
+						llgodelement.llgod_type = "aoi_nom"
+						triagePlaces.push(llgodelement)
+					});
+				});}
 
-			$.getJSON(service_url, null, function(response) {
-				$.each(response, function(i, element) {
-					var llgodelement = element
-					llgodelement.llgod_type = "aoi_nom"
-					triagePlaces.push(llgodelement)
-				});
-			});
 
 
-
-			return this
+				return this
 		} //wasn't coords - we propogate the query string to nominatim and solr
 	}
 })
@@ -1330,6 +1438,36 @@ var StateView = Backbone.View.extend({
 
 });
 
+var DlexToggleView = Backbone.View.extend({
+
+	el: $("#dlex-toggle-wrapper"),
+	template: Handlebars.templates['DlexToggleTpl'],
+	events: {
+		"click li": function(e) {
+			var v = (this.model.get("clip")==0)?1:0;
+			this.model.set({clip:v});
+		}
+	},
+	initialize: function() {
+		// this.listenTo(appState, 'change', this.render);
+		this.listenTo(this.model, 'change', this.render);
+		return this.render()
+	},
+	change: function(){
+
+		console.log("clip:")
+		console.log(this.model.get("clip"))
+
+		return this.render()
+
+	},
+	render: function() {
+
+		$(this.el).html(this.template(this.model.toJSON()))
+		return this
+	}
+});
+
 var PanelMenuView = Backbone.View.extend({
 
 	el: $("#navContainer .tabbable .nav-tabs"),
@@ -1370,7 +1508,7 @@ var BaseMapView = Backbone.View.extend({
 
 	id: "map",
 	initialize: function() {
-		// map.setMaxBounds(LLGOD.boundsFromBBOX("-180,-90,180,90"))
+		// map.setMaxBounds(UTIL.boundsFromBBOX("-180,-90,180,90"))
 		this.listenTo(appState, 'change:bbox', this.zoom)
 		this.listenTo(this.collection, 'change:active', this.render)
 		return this.render()
@@ -1378,7 +1516,7 @@ var BaseMapView = Backbone.View.extend({
 	zoom: function() {
 
 		if ((appState.get("bbox") !== null) && typeof appState.get("bbox") !== 'undefined' && map.getBounds().toBBoxString() !== appState.get("bbox")) {
-			map.fitBounds(LLGOD.boundsFromBBOX(appState.get("bbox")))
+			map.fitBounds(UTIL.boundsFromBBOX(appState.get("bbox")))
 		}
 
 	},
@@ -1551,7 +1689,7 @@ var SwitcherView = Backbone.View.extend({
 			map.fitBounds(groupAOI.getBounds())
 			break;
 			case "aoi_point":
-			map.fitBounds(LLGOD.boundsFromBBOX(LLGOD.boundstringFromNOMIN(appAOI.get("boundingbox"))))
+			map.fitBounds(UTIL.boundsFromBBOX(UTIL.boundstringFromNOMIN(appAOI.get("boundingbox"))))
 
 			break;
 			case "hitz":
