@@ -1211,6 +1211,42 @@ DETAILS
 DOWNLOADS
 ------------ */
 
+#dlex-toggle-wrapper{
+  padding-top:10px;
+  .dlex-toggle{
+    cursor:pointer;
+    list-style: none;
+    text-align:center;
+    font-size:1.3em;
+    font-weight:800;
+    li.dlex-toggle-switch{
+      color:gray;
+      &:hover{
+        color:darken(gray,22%);
+      }
+    }
+    li.dlex-toggle-switch.on{
+      color:@primary;
+      font-weight: 800;
+      &:hover{
+        color:lighten(@primary,52%);
+      }
+    }
+    }}
+
+    .download-format-menu{
+      list-style:none;
+      display: inline;
+      font-size:2em;
+      text-align: center;
+      .download-format-choose{
+        cursor:pointer;
+        padding-right:8px;
+        color:@primary;
+        &:hover{color:lighten(@primary,45%);}
+
+      }
+    }
 
 /* ----------
 LEAFLET
@@ -1251,25 +1287,6 @@ LEAFLET
 }
 
 
-
-/* ----------
-DOWNLOAD STUFF
------------- */
-#dlex-toggle-wrapper{
-  padding-top:10px;
-  .dlex-toggle{
-    cursor:pointer;
-    list-style: none;
-    text-align:center;
-    font-size:.9em;
-    font-weight:800;
-    li.dlex-toggle-switch{
-      color:gray;
-      .on{
-        color:@primary;
-      }
-    }
-    }}
 
 
 /* ----------

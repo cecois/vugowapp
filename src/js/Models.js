@@ -1,3 +1,5 @@
+var Download = Backbone.Model.extend({defaults: {},initialize: function(){return this;}}); //dl
+
 var DownloadExtent = Backbone.Model.extend({
 	defaults: {
 		"bbox": null,
@@ -6,26 +8,30 @@ var DownloadExtent = Backbone.Model.extend({
 	},
 	initialize: function() {
 
-		this.set({bbox:map.getBounds().toBBoxString()})
+		// this.set({bbox:map.getBounds().toBBoxString()})
 		// this.listenTo(triagePlace,"change","update")
 		// this.listenTo(appState,"change:bbox","update")
 		// this.listenTo(this,"change","update")
 		// this.listenTo(appAOI, 'change:geojson', this.update);
 		// map.on('moveend', this.update());
+		// map.on('moveend', this.set({bbox:map.getBounds().toBBoxString()}));
 
-		var that = this
-		groupAOI.on('layeradd',function(){
-			that.update()
-		})
+		// var that = this
+		// groupAOI.on('layeradd',function(){
+		// 	that.update()
+		// })
 
 		return this
 		// .update()
 	},
 	update: function(){
 
+		console.log("in update, appstate bbox:")
+		console.log(appDLEX.get("bbox"));
+
 		if(this.get("clip")==1){
 			console.log("clip is 1")
-			// this.set({bbox:map.getBounds().toBBoxString()})
+			this.set({bbox:appDLEX.get("bbox")})
 		} else {
 			console.log("clip is NOT 1")
 			this.set({bbox:"-180,-90,180,90"})
@@ -461,7 +467,6 @@ var State = Backbone.Model.extend({
 	initialize: function(options) {
 		options || (options = {});
 		this.bind("change:layers", this.layerize, this)
-		// this.bind("change:bbox", this.catchzoomz, this)
 		return this
 	},
 	catchzoomz: function(){
@@ -601,22 +606,6 @@ var Home = Backbone.Model.extend({
 
 var Util = Backbone.Model.extend({
 	initialize: function() {},
-	// cleanlayerarray: function(arr){
-
-	// 	console.log("in util, layer arr");
-	// 	console.log(arr)
-
-	// which of these are baselayers?
-
-	// if there aren't any, find ask baselayers what its default was
-
-	// otherwise remove all but first
-
-	// return layerarr w/ extraneous baselayers missing
-
-	// return this
-
-	// },
 	get_style: function(kind) {
 
 		var po = .65; //poly opacity
@@ -826,20 +815,39 @@ var Util = Backbone.Model.extend({
 		return [bba[0],bba[1],bba[2],bba[3]];
 
 	},
-	boundsFromBBOX: function(bboxstring) {
+	bbox2wkt: function(bbox){
+// quite rudimentary stopgap (wicket wasn't working at the time) conversion of poly or point to wktL
 
-		var bba = bboxstring.split(",")
+var coordarr = bbox.split(',')
+var clength = coordarr.length
+if (clength > 2) {
+        // assume a poly
+        var west = coordarr[0]
+        var south = coordarr[1]
+        var east = coordarr[2]
+        var north = coordarr[3]
+        var wkt = "POLYGON ((" + west + " " + south + ", " + east + " " + south + ", " + east + " " + north + ", " + west + " " + north + ", " + west + " " + south + "))"
+            //
+        } else {
+        	var wkt = "POINT (" + coordarr[1] + " " + coordarr[0] + ")"
+        }
+        return wkt
 
-		if (bba.length < 4) {
-			return "incomplete bbox submitted"
-		}
+    },
+    boundsFromBBOX: function(bboxstring) {
 
-		var southWest = L.latLng(bba[1], bba[0]),
-		northEast = L.latLng(bba[3], bba[2]),
-		bounds = L.latLngBounds(southWest, northEast);
+    	var bba = bboxstring.split(",")
+
+    	if (bba.length < 4) {
+    		return "incomplete bbox submitted"
+    	}
+
+    	var southWest = L.latLng(bba[1], bba[0]),
+    	northEast = L.latLng(bba[3], bba[2]),
+    	bounds = L.latLngBounds(southWest, northEast);
 
 
-		return bounds;
+    	return bounds;
 
-	}
+    }
 });

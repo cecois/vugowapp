@@ -1,3 +1,139 @@
+var DownloadView = Backbone.View.extend({
+	el: $("#modal-download-copy"),
+	template: Handlebars.templates['Modal-Download'],
+	template_error: Handlebars.templates['Modal-Download-Error'],
+	events: {
+		// "click .search-active-bt-close" : "stfu"
+		"click .download-format-choose": "download"
+	},
+	initialize: function() {
+		this.listenTo(this.model, 'change', this.change);
+		return this
+	},
+	download: function(e){
+
+		var fmt = $(e.currentTarget).attr("data-id")
+
+		var ogs = this.model.get("ogslug")
+	// rather than force storing this in meta, it's just as easy to yank it - at least for a controlled demo like this
+	var usr = ogs.split(".carto")[0].split("://")[1]
+	var host = ogs.split("/tables")[0]
+	var table = ogs.split("tables/")[1]
+
+// more robust way to do this is w/ wicket or turf or something, but again - we know the intersecting geom is going to be a bbox string
+var wkt = "ST_GeographyFromText('SRID=4326;"+UTIL.bbox2wkt(map.getBounds().toBBoxString())+"')";
+
+var sql = '';
+
+if(appDLEX.get("clip")==1){
+	sql = "SELECT * from "+table+" where st_intersects(the_geom,"+wkt+");";
+
+} else {
+	sql = "select * from "+table;
+
+}
+
+var format = fmt;
+
+var durl = host+"/api/v2/sql?format="+format+"&q="+sql;
+window.location.href = durl;
+
+return this
+
+
+},
+change: function(){
+
+	console.log("in change of dlv")
+	return this.render()
+
+},
+render: function(){
+
+	appActivityView.stfu();
+
+	var fmts = []
+	switch (this.model.get("geo_source")) {
+		case "carto":
+		dlfmts = Config.D_FORMATS_CARTO;
+		dlsource = "Carto";
+		dltitle = "Available Formats from Carto:"
+		break;
+		case "local":
+		dlfmts = []
+		break;
+		default:
+		console.log("shouldn't even be here")
+	}
+
+
+	var ogs = this.model.get("ogslug")
+	// rather than force storing this in meta, it's just as easy to yank it - at least for a controlled demo like this
+	var usr = ogs.split(".carto")[0].split("://")[1]
+	var host = ogs.split("/tables")[0]
+	var table = ogs.split("tables/")[1]
+
+	if(appDLEX.get("clip")==1){
+		var wkt = "ST_GeographyFromText('SRID=4326;"+UTIL.bbox2wkt(map.getBounds().toBBoxString())+"')";
+		sql = "select count(*) as count from "+table+" where st_intersects(the_geom,"+wkt+");";
+
+	} else {
+		sql = "select count(*) as count from "+table;
+
+	}
+
+	
+	// var durl = host+"/api/v2/sql?format=json&q="+sql;
+	var durl = host+"/api/v2/sql?";
+
+	var that=this
+
+	$.getJSON( durl, {q:sql,format:'json'} )
+	.done(function( json ) {
+		if(json.rows[0]['count']==0){
+			var explainn = (appDLEX.get("clip")==1)?"Given that downloads are currently clipped to the map extent, you likely just need to zoom out/reposition the map.": "The map is not currently clipping downloads by extent - either the table is empty or some other error is preventing features to appear.";
+			$(that.el).html(that.template_error(
+				{title:"Error - no features were found within the current AOI.",
+				explain:explainn}
+				))
+		} else {
+			$(that.el).html(that.template(
+				{title:dltitle,
+					formats:dlfmts,
+					source:dlsource,
+					count:json.rows[0]['count'],
+					dl:that.model.toJSON()}
+					))}
+			$('#modal-download').modal('show');
+		})
+	.fail(function( jqxhr, textStatus, error ) {
+		var err = textStatus + ", " + error;
+		console.log( "Request Failed: " + err );
+	});
+
+	// var rows = $.getJSON( durl, {context:this},function(resp) {
+	// 	console.log( "success, resp:" );
+	// 	console.log( resp.rows );
+	// 	return resp.rows
+	// })
+	// .done(function() {
+	// 	// var rows = 999
+
+
+
+	// })
+	// .fail(function() {
+	// 	console.log( "error" );
+	// });
+
+
+	
+
+	return this
+}
+
+});
+
 var DownloadExtentMenuView = Backbone.View.extend({
 	el: $("#layer-switcher-dlex"),
 	template: Handlebars.templates['layer-switcher-dlex'],
@@ -112,7 +248,7 @@ var PreeView = Backbone.View.extend({
 		var gurl=this.model.get("gurl")
 
 		var G = null;
-		if(MODE=="bus"){
+		if(Config.MODE=="bus"){
 			$.getJSON("js/fake-carto.json",function(g){
 
 				L.geoJSON(g, {
@@ -516,7 +652,6 @@ var QueryMap = Backbone.View.extend({
 
 				if (g.layer.feature.properties.did !== appState.get("active")) {
 					var did = g.layer.feature.properties.did
-					console.log("did"+did)
 							// $(".hit-wrapper[data-id='" + did + "']").find(".hit-title").addClass("hit-hover")
 							$(".hit-wrapper[data-id='" + did + "']").addClass("hit-hover")
 							g.layer.setStyle(UTIL.get_style("hithover"))
@@ -676,24 +811,60 @@ preview: function(e){
 	download_triage: function(e){
 
 
-
 		did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
 		var am = quHz.findWhere({_id:did});
+		console.log("am in triage:")
+		console.log(am)
+
+
 
 		appActivity.set({message:"sniffing source &amp; format..."})
 
 // here's future switch for raster or other sources w/ different APIs
-if(am.get("geo_source")=="carto"){
-	return this.download_carto(am)
-} else {
+// if(am.get("geo_source")=="carto"){
+	// return this.download_carto(am)
+	appDL.set(am.attributes);
+
+	if(appDL._changing=='false'){
+		appDL.trigger('change', appDL);
+	}
+
 	return this
-}
+// } else {
+// 	return this
+// }
 
 },
-download_carto(m){
+present: function(m){
 
-	console.log("in dl_carto, gunna dl this:")
-	console.log(m);
+	// appActivityView.stfu();
+
+	// var so = "carto";
+
+	// if(so=="carto"){
+	// 	var fmts = ["csv","shp","geojson","svg","kml"]
+	// }
+
+	// $("#modal-download-copy").html(fmts.join(" - "))
+	// $('#modal-download').modal('show');
+
+	return this
+
+},
+download_carto: function(m){
+
+
+	var ogs = m.get("ogslug")
+	// rather than force storing this in meta, it's just as easy to yank it - at least for a controlled demo like this
+	var usr = ogs.split(".carto")[0].split("://")[1]
+	var host = ogs.split("/tables")[0]
+	var table = ogs.split("tables/")[1]
+	var sql = "select * from "+table+" limit 5";
+	var format = "csv";
+
+	var durl = "https://pugolian.carto.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM cbb_point LIMIT 1"
+	var durl = host+"/api/v2/sql?format="+format+"&q="+sql;
+	window.location.href = durl;
 
 	return this
 },
@@ -795,6 +966,13 @@ darken: function(e) {
 
 		return this
 	},
+	rewire: function(){
+
+		$(".tt").tooltip();
+
+		return this
+
+	},
 	render: function() {
 
 
@@ -818,6 +996,7 @@ darken: function(e) {
 			}));
 		}
 		return this
+		.rewire();
 	}
 
 });
@@ -1341,8 +1520,8 @@ var StateView = Backbone.View.extend({
 
 	el: $("body"),
 	events: {
-		"click #paneToggler-split": "togglesplit",
-		"click #paneToggler-down": "toggledown"
+		"click #paneToggler-split": "downout",
+		"click #paneToggler-down": "downout"
 	},
 	initialize: function() {
 		// this.model.bind("change:layers", this.validate, this)
@@ -1351,20 +1530,19 @@ var StateView = Backbone.View.extend({
 			this.listenTo(map, 'moveend', this.bboxup);
 			return this
 		},
-		togglesplit: function(e) {
+		downout: function(e) {
 
 			e.preventDefault();
 
-			this.model.toggle("split")
+			var target = $(e.currentTarget).attr("id").split("-")[1]
 
-			return this
+// override if the same state was requested (in effect resetting)
+if(this.model.get("downout")==target){
+	target = "out"
+}
 
-		},
-		toggledown: function(e) {
-
-			e.preventDefault();
-
-			this.model.toggle("down")
+			// this.model.toggle("split")
+			this.model.set({downout:target})
 
 			return this
 
@@ -1375,6 +1553,9 @@ var StateView = Backbone.View.extend({
 
 			if (bbox !== this.model.get("bbox")) {
 				this.model.set({
+					bbox: bbox
+				})
+				appDLEX.set({
 					bbox: bbox
 				})
 			}

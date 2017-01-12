@@ -17,13 +17,16 @@ b/c of the search bar in the header
 // window.geowebCacheRoot = "http://" + apphost + "/gs/gwc/service/wms";
 // THIS SHOULD BE SET TO THE ACTUAL HOSTNAME OF THE TARGET DIST
 // window.geoServerHost = "http://" + apphost + "/gs/";
+
+
+
 window.map = new L.Map('map', {
     zoomControl: false,
     center: [51.505, -0.09],
     // center: [42.53689, -71.22986],
     attributionControl: false,
     zoom: 7
-});
+})
 
 /* ------------- LEAFLET GROUPS -------------------------------------- */
 groupHITZ = L.layerGroup().addTo(map);
@@ -104,7 +107,9 @@ aoiMenu = new AOIMenuView({model:appAOI})
     // window.triageAOIs = new TriageCollection();
 
     appDLEX = new DownloadExtent();
+    appDL = new Download();
     appDLEXToggleView = new DlexToggleView({model:appDLEX})
+    appDLView = new DownloadView({model:appDL})
     // appDLEXView = new DownloadExtentView({model:appDLEX});
     // appDLEXMenuView = new DownloadExtentMenuView({model:appDLEX});
 
@@ -818,8 +823,8 @@ function addDiscsPolys(discjson, disc) {
     var invalids = [];
     // ok listen - some of these series just have too many polys so we gotta order on the map by area *before* we add them
     var discjsonsor = _.sortBy(discjson, function(d) {
-     if(typeof d.envelope !== 'undefined' && d.envelope !== '' && d.envelope !== null)
-     {
+       if(typeof d.envelope !== 'undefined' && d.envelope !== '' && d.envelope !== null)
+       {
     	// var thisarea = turf.area(wellknown.parse(d.envelope))
         return turf.area(wellknown.parse(d.envelope))*-1} else {return 1;}
     });

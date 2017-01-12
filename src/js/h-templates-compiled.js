@@ -619,6 +619,33 @@ templates['layer-switcher-dlex'] = template({"compiler":[6,">= 2.0.0-beta.1"],"m
     + escapeExpression(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"message","hash":{},"data":data}) : helper)))
     + "</span>\n<div style=\"width:30px;height:12px;\" class=\"swatch-dlex pull-left\"></div>\n</div>\n";
 },"useData":true});
+templates['Modal-Download-Error'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "      <div class=\"modal-header\">\n      <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n      <h4 class=\"modal-title\" id=\"modal-download-label\">Error!</h4>\n      </div>\n      <div class=\"modal-body\" id=\"modal-download-copy\">\n      <h3>"
+    + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
+    + "</h3>\n      <div class=\"anno\">"
+    + escapeExpression(((helper = (helper = helpers.explain || (depth0 != null ? depth0.explain : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"explain","hash":{},"data":data}) : helper)))
+    + "</div>\n      </div>\n      <div class=\"modal-footer\">\n      </div>\n\n";
+},"useData":true});
+templates['Modal-Download'] = template({"1":function(depth0,helpers,partials,data) {
+  var lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "      <li class=\"pull-left download-format-choose\" data-id=\""
+    + escapeExpression(lambda(depth0, depth0))
+    + "\">"
+    + escapeExpression(lambda(depth0, depth0))
+    + "</li>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "      <div class=\"modal-header\">\n      <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n      <h4 class=\"modal-title\" id=\"modal-download-label\">Download Options from "
+    + escapeExpression(((helper = (helper = helpers.source || (depth0 != null ? depth0.source : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"source","hash":{},"data":data}) : helper)))
+    + " ("
+    + escapeExpression(((helper = (helper = helpers.count || (depth0 != null ? depth0.count : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"count","hash":{},"data":data}) : helper)))
+    + " features):</h4>\n      </div>\n      <div class=\"modal-body\" id=\"modal-download-copy\">\n      <h5>"
+    + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
+    + "</h5>\n      <ul class=\"download-format-menu\">\n";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.formats : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "      </ul>\n      </div>\n      <div class=\"modal-footer\">\n      </div>\n\n";
+},"useData":true});
 templates['modalViewTpl'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "<div class=\"modal-header\">\n\n    <h3 id=\"myModalLabel\">Download Notice</h3>\n  </div>\n  <div class=\"modal-body\">\n  <p>"
@@ -681,7 +708,7 @@ templates['QueryViewSplitTpl'] = template({"1":function(depth0,helpers,partials,
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, buffer = "\n<h4>"
     + escapeExpression(lambda((depth0 != null ? depth0.title : depth0), depth0))
-    + "</h4>\n<ul class=\"toolbar-hitz list-inline list-unstyled col-sm-12\">\n	<li class=\"col-sm-5\"></li>\n	<li class=\"col-sm-1 toolbar-hitz-trigger toolbar-hitz-zoom glyphicon glyphicon-fullscreen\"></li>\n	<li class=\"col-sm-1 toolbar-hitz-trigger toolbar-hitz-hide glyphicon glyphicon-ban-circle\"></li>\n	<li class=\"col-sm-5\"></li>\n</ul>\n<ul class=\"list-unstyled ul-hitz-split\">";
+    + "</h4>\n<ul class=\"toolbar-hitz list-inline list-unstyled col-sm-12\">\n	<li class=\"col-sm-5\"></li>\n	<li title=\"zoom map to full extent of all search hit extents\" class=\"tt col-sm-1 toolbar-hitz-trigger toolbar-hitz-zoom glyphicon glyphicon-fullscreen\"></li>\n	<li title=\"toggle visibility of all hit extents\" class=\"tt col-sm-1 toolbar-hitz-trigger toolbar-hitz-hide glyphicon glyphicon-ban-circle\"></li>\n	<li class=\"col-sm-5\"></li>\n</ul>\n<ul class=\"list-unstyled ul-hitz-split\">";
   stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.rows : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</ul>";
