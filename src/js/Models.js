@@ -168,19 +168,6 @@ var Query = Backbone.Model.extend({
 		return spatial
 
 	},
-	oef: function(f,l){
-
-		var popupContent = "<strong>" +f.properties.name + "</strong>";
-
-		if (f.properties && f.properties.popupContent) {
-			popupContent += f.properties.popupContent;
-		}
-
-		l.bindPopup(popupContent);
-
-		return this
-
-	},
 	get_earth_factor: function() {
 
 		var bounds = UTIL.boundsFromBBOX(appState.get("bbox"))
@@ -832,6 +819,19 @@ if (clength > 2) {
         	var wkt = "POINT (" + coordarr[1] + " " + coordarr[0] + ")"
         }
         return wkt
+
+    },
+    oef: function(f,l){
+
+    	var popupContent = "<strong>" +f.properties.name + "</strong>";
+
+    	if (f.properties && f.properties.popupContent) {
+    		popupContent += f.properties.popupContent;
+    	}
+
+    	l.bindPopup(popupContent);
+
+    	return this
 
     },
     boundsFromBBOX: function(bboxstring) {

@@ -28,6 +28,10 @@ window.map = new L.Map('map', {
     zoom: 7
 })
 
+
+// UTILITY CLASS (CONVERSIONS/SNIFFS/ETC.)
+window.UTIL = new Util();
+
 /* ------------- LEAFLET GROUPS -------------------------------------- */
 groupHITZ = L.layerGroup().addTo(map);
 groupAOI = L.featureGroup().addTo(map).bringToFront();
@@ -59,8 +63,6 @@ window.pop_wktString = $("#btnGeocode").popover({
 
 
 
-// UTILITY CLASS (CONVERSIONS/SNIFFS/ETC.)
-window.UTIL = new Util();
 
 
 // STATE LISTENS FOR AND SETS MOST/ALL OF THE PARAMS COMING IN FRM ROUTE (OR DEFAULT)
@@ -823,8 +825,8 @@ function addDiscsPolys(discjson, disc) {
     var invalids = [];
     // ok listen - some of these series just have too many polys so we gotta order on the map by area *before* we add them
     var discjsonsor = _.sortBy(discjson, function(d) {
-       if(typeof d.envelope !== 'undefined' && d.envelope !== '' && d.envelope !== null)
-       {
+     if(typeof d.envelope !== 'undefined' && d.envelope !== '' && d.envelope !== null)
+     {
     	// var thisarea = turf.area(wellknown.parse(d.envelope))
         return turf.area(wellknown.parse(d.envelope))*-1} else {return 1;}
     });

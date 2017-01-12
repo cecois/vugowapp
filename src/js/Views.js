@@ -247,22 +247,21 @@ var PreeView = Backbone.View.extend({
 
 		var gurl=this.model.get("gurl")
 
+		appActivityView.stfu()
+
 		var G = null;
 		if(Config.MODE=="bus"){
 			$.getJSON("js/fake-carto.json",function(g){
 
 				L.geoJSON(g, {
 					style:UTIL.get_style(),
-					filter: function (feature, layer) {
-						if (feature.properties) {
-				// If the property "underConstruction" exists and is true, return false (don't render features under construction)
-				return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-			}
-			return false;
-		},
+					onEachFeature: function(f,l){
 
-		onEachFeature: UTIL.oef()
-	}).addTo(groupPREEV);
+						return UTIL.oef(f,l);
+					}
+					// onEachFeature: UTIL.oef()
+					
+				}).addTo(groupPREEV)
 			})
 		} else {
 			var sql = new cartodb.SQL({ user: 'cecmcgee' });
@@ -275,16 +274,11 @@ var PreeView = Backbone.View.extend({
 
 				L.geoJSON(data, {
 					style:UTIL.get_style(),
-					filter: function (feature, layer) {
-						if (feature.properties) {
-				// If the property "underConstruction" exists and is true, return false (don't render features under construction)
-				return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
-			}
-			return false;
-		},
+					onEachFeature: function(f,l){
 
-		onEachFeature: UTIL.oef()
-	}).addTo(groupPREEV);
+						return UTIL.oef(f,l);
+					}
+				}).addTo(groupPREEV);
 
 				return data.rows;
 			})
