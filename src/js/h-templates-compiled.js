@@ -628,21 +628,28 @@ templates['Modal-Download-Error'] = template({"compiler":[6,">= 2.0.0-beta.1"],"
     + "</div>\n      </div>\n      <div class=\"modal-footer\">\n      </div>\n\n";
 },"useData":true});
 templates['Modal-Download'] = template({"1":function(depth0,helpers,partials,data) {
+  return "feature";
+  },"3":function(depth0,helpers,partials,data) {
+  return "features";
+  },"5":function(depth0,helpers,partials,data) {
   var lambda=this.lambda, escapeExpression=this.escapeExpression;
   return "      <li class=\"pull-left download-format-choose\" data-id=\""
     + escapeExpression(lambda(depth0, depth0))
     + "\">"
     + escapeExpression(lambda(depth0, depth0))
-    + "</li>\n";
+    + "</li> \n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "      <div class=\"modal-header\">\n      <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n      <h4 class=\"modal-title\" id=\"modal-download-label\">Download Options from "
     + escapeExpression(((helper = (helper = helpers.source || (depth0 != null ? depth0.source : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"source","hash":{},"data":data}) : helper)))
     + " ("
     + escapeExpression(((helper = (helper = helpers.count || (depth0 != null ? depth0.count : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"count","hash":{},"data":data}) : helper)))
-    + " features):</h4>\n      </div>\n      <div class=\"modal-body\" id=\"modal-download-copy\">\n      <h5>"
+    + " ";
+  stack1 = ((helpers.equal || (depth0 && depth0.equal) || helperMissing).call(depth0, (depth0 != null ? depth0.count : depth0), 1, {"name":"equal","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data}));
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "):</h4>\n      </div>\n      <div class=\"modal-body\" id=\"modal-download-copy\">\n      <h5>"
     + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
     + "</h5>\n      <ul class=\"download-format-menu\">\n";
-  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.formats : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.formats : depth0), {"name":"each","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "      </ul>\n      </div>\n      <div class=\"modal-footer\">\n      </div>\n\n";
 },"useData":true});

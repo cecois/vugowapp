@@ -1,12 +1,12 @@
       <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <h4 class="modal-title" id="modal-download-label">Download Options from {{source}} ({{count}} features):</h4>
+      <h4 class="modal-title" id="modal-download-label">Download Options from {{source}} ({{count}} {{#equal count 1}}feature{{else}}features{{/equal}}):</h4>
       </div>
       <div class="modal-body" id="modal-download-copy">
       <h5>{{title}}</h5>
       <ul class="download-format-menu">
       {{#each formats}}
-      <li class="pull-left download-format-choose" data-id="{{this}}">{{this}}</li>
+      <li class="pull-left download-format-choose" data-id="{{this}}">{{this}}</li> 
       {{/each}}
       </ul>
       </div>

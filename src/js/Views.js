@@ -14,24 +14,15 @@ var DownloadView = Backbone.View.extend({
 
 		var fmt = $(e.currentTarget).attr("data-id")
 
-		var ogs = this.model.get("ogslug")
-	// rather than force storing this in meta, it's just as easy to yank it - at least for a controlled demo like this
-	var usr = ogs.split(".carto")[0].split("://")[1]
-	var host = ogs.split("/tables")[0]
-	var table = ogs.split("tables/")[1]
+		var ogslug = this.model.get("ogslug")
 
-// more robust way to do this is w/ wicket or turf or something, but again - we know the intersecting geom is going to be a bbox string
-var wkt = "ST_GeographyFromText('SRID=4326;"+UTIL.bbox2wkt(map.getBounds().toBBoxString())+"')";
+		var cc=UTIL.carto2config(ogslug)
+		var usr = cc.usr
+		,host=cc.host
+		,table=cc.table;
 
-var sql = '';
-
-if(appDLEX.get("clip")==1){
-	sql = "SELECT * from "+table+" where st_intersects(the_geom,"+wkt+");";
-
-} else {
-	sql = "select * from "+table;
-
-}
+// pull the sql but with type=null - meaning actually pull data (don't just count it e.g.)
+var sql = UTIL.carto_sql_gen(null,ogslug);
 
 var format = fmt;
 
@@ -67,69 +58,44 @@ render: function(){
 	}
 
 
-	var ogs = this.model.get("ogslug")
-	// rather than force storing this in meta, it's just as easy to yank it - at least for a controlled demo like this
-	var usr = ogs.split(".carto")[0].split("://")[1]
-	var host = ogs.split("/tables")[0]
-	var table = ogs.split("tables/")[1]
+	var ogslug = this.model.get("ogslug")
 
-	if(appDLEX.get("clip")==1){
-		var wkt = "ST_GeographyFromText('SRID=4326;"+UTIL.bbox2wkt(map.getBounds().toBBoxString())+"')";
-		sql = "select count(*) as count from "+table+" where st_intersects(the_geom,"+wkt+");";
+	var cc=UTIL.carto2config(ogslug)
+	var usr = cc.usr
+	,host=cc.host
+	,table=cc.table;
 
+// pull the sql but as a count
+var sql = UTIL.carto_sql_gen('count',ogslug);
+
+var durl = host+"/api/v2/sql?";
+
+var that=this
+
+$.getJSON( durl, {q:sql,format:'json'} )
+.done(function( json ) {
+	if(json.rows[0]['count']==0){
+		var explainn = (appDLEX.get("clip")==1)?"Given that downloads are currently clipped to the map extent, you likely just need to zoom out/reposition the map.": "The map is not currently clipping downloads by extent - either the table is empty or some other error is preventing features to appear.";
+		$(that.el).html(that.template_error(
+			{title:"Error - no features were found within the current AOI.",
+			explain:explainn}
+			))
 	} else {
-		sql = "select count(*) as count from "+table;
+		$(that.el).html(that.template(
+			{title:dltitle,
+				formats:dlfmts,
+				source:dlsource,
+				count:json.rows[0]['count'],
+				dl:that.model.toJSON()}
+				))}
+		$('#modal-download').modal('show');
+	})
+.fail(function( jqxhr, textStatus, error ) {
+	var err = textStatus + ", " + error;
+	console.log( "Request Failed: " + err );
+});
 
-	}
-
-	
-	// var durl = host+"/api/v2/sql?format=json&q="+sql;
-	var durl = host+"/api/v2/sql?";
-
-	var that=this
-
-	$.getJSON( durl, {q:sql,format:'json'} )
-	.done(function( json ) {
-		if(json.rows[0]['count']==0){
-			var explainn = (appDLEX.get("clip")==1)?"Given that downloads are currently clipped to the map extent, you likely just need to zoom out/reposition the map.": "The map is not currently clipping downloads by extent - either the table is empty or some other error is preventing features to appear.";
-			$(that.el).html(that.template_error(
-				{title:"Error - no features were found within the current AOI.",
-				explain:explainn}
-				))
-		} else {
-			$(that.el).html(that.template(
-				{title:dltitle,
-					formats:dlfmts,
-					source:dlsource,
-					count:json.rows[0]['count'],
-					dl:that.model.toJSON()}
-					))}
-			$('#modal-download').modal('show');
-		})
-	.fail(function( jqxhr, textStatus, error ) {
-		var err = textStatus + ", " + error;
-		console.log( "Request Failed: " + err );
-	});
-
-	// var rows = $.getJSON( durl, {context:this},function(resp) {
-	// 	console.log( "success, resp:" );
-	// 	console.log( resp.rows );
-	// 	return resp.rows
-	// })
-	// .done(function() {
-	// 	// var rows = 999
-
-
-
-	// })
-	// .fail(function() {
-	// 	console.log( "error" );
-	// });
-
-
-	
-
-	return this
+return this
 }
 
 });
@@ -243,9 +209,16 @@ var PreeView = Backbone.View.extend({
 
 	// 	return this
 	// },
+
 	subrender_carto: function(){
 
-		var gurl=this.model.get("gurl")
+		var ogslug=this.model.get("gurl")
+
+		var cc=UTIL.carto2config(ogslug)
+		var usr = cc.usr
+		,host=cc.host
+		,table=cc.table;		
+
 
 		appActivityView.stfu()
 
@@ -254,7 +227,7 @@ var PreeView = Backbone.View.extend({
 			$.getJSON("js/fake-carto.json",function(g){
 
 				L.geoJSON(g, {
-					style:UTIL.get_style(),
+					style:UTIL.get_style(g.geometry.type.toLowerCase()),
 					onEachFeature: function(f,l){
 
 						return UTIL.oef(f,l);
@@ -264,16 +237,16 @@ var PreeView = Backbone.View.extend({
 				}).addTo(groupPREEV)
 			})
 		} else {
-			var sql = new cartodb.SQL({ user: 'cecmcgee' });
+			var sql = new cartodb.SQL({ user: Config.CARTO_USER });
 
-			sql.execute("SELECT * FROM spatialtrack_point WHERE cartodb_id > {{id}}", { id: 3 },{format:"GeoJSON"})
+			sql.execute("SELECT * FROM "+table+" WHERE cartodb_id > {{id}}", { id: 3 },{format:"GeoJSON"})
 			.done(function(data) {    
 
-				console.log("data in done of sql:")
-				console.log(data);
-
 				L.geoJSON(data, {
-					style:UTIL.get_style(),
+					style:UTIL.get_style("fepoly"),
+					pointToLayer: function(feature, latlng) {
+						return L.circleMarker(latlng, UTIL.get_style("point"));
+					},
 					onEachFeature: function(f,l){
 
 						return UTIL.oef(f,l);
@@ -807,8 +780,7 @@ preview: function(e){
 
 		did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
 		var am = quHz.findWhere({_id:did});
-		console.log("am in triage:")
-		console.log(am)
+
 
 
 
@@ -817,11 +789,12 @@ preview: function(e){
 // here's future switch for raster or other sources w/ different APIs
 // if(am.get("geo_source")=="carto"){
 	// return this.download_carto(am)
-	appDL.set(am.attributes);
+	appDL.set(am.attributes,{silent:true});
 
-	if(appDL._changing=='false'){
-		appDL.trigger('change', appDL);
-	}
+	appDL.set({stamp:Date.now()})
+	// if(appDL._changing=='false'){
+	// 	appDL.trigger('change', appDL);
+	// }
 
 	return this
 // } else {
@@ -845,23 +818,33 @@ present: function(m){
 	return this
 
 },
-download_carto: function(m){
+// download_carto: function(m){
 
 
-	var ogs = m.get("ogslug")
-	// rather than force storing this in meta, it's just as easy to yank it - at least for a controlled demo like this
-	var usr = ogs.split(".carto")[0].split("://")[1]
-	var host = ogs.split("/tables")[0]
-	var table = ogs.split("tables/")[1]
-	var sql = "select * from "+table+" limit 5";
-	var format = "csv";
+// 	var ogs = m.get("ogslug")
+// 	// rather than force storing this in meta, it's just as easy to yank it - at least for a controlled demo like this
+// 	// var usr = ogs.split(".carto")[0].split("://")[1]
+// 	// var host = ogs.split("/tables")[0]
+// 	// var table = ogs.split("tables/")[1]
 
-	var durl = "https://pugolian.carto.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM cbb_point LIMIT 1"
-	var durl = host+"/api/v2/sql?format="+format+"&q="+sql;
-	window.location.href = durl;
+// 	var cc=UTIL.carto2config(ogslug)
+// 	var usr = cc.usr
+// 	,host=cc.host
+// 	,table=cc.table;
 
-	return this
-},
+// 	console.log("host")
+// 	console.log(host)
+
+// 	var sql = "select * from "+table+" limit 5";
+// 	var format = "csv";
+
+// 	// var durl = "https://"+usr+".carto.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM cbb_point LIMIT 1"
+// 	var durl = host+"/api/v2/sql?format="+format+"&q="+sql;
+// 	// window.location.href = durl;
+// 	console.log(durl);
+
+// 	return this
+// },
 zoom: function(e){
 
 	var did = null
@@ -1700,7 +1683,7 @@ var BaseMapView = Backbone.View.extend({
 		var am = this.collection.findWhere({
 			active: true
 		});
-		var def = am.get("definition");
+		var def = (typeof am !== 'undefined')?am.get("definition"):null;
 
 		// remove global layer here first so we don't keep stacking baselayers
 		// (we only need one baselayer at a time, of course)
@@ -1710,7 +1693,7 @@ var BaseMapView = Backbone.View.extend({
 			map.removeLayer(baseLayer);
 		}
 		// a little special handling for stamen maps
-		if (am.get("source") == "stamen") {
+		if (typeof am !== 'undefined' && am.get("source") == "stamen") {
 
 			baseLayer = new L.StamenTileLayer(def.id);
 

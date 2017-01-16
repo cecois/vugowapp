@@ -1,7 +1,8 @@
 var Config={
-	"MODE":"bus",
+	"MODE":"apt",
 	"POINTBUFFER":500,
 	"SOLRROOT":"http://localhost:8989/solr/#/biblio/",
-	"POLYOPACITY":.15,
+	"POLYOPACITY":.85,
+	"CARTO_USER":"cecmcgee",
 	"D_FORMATS_CARTO":["csv","shp","geojson","kml","svg"]
 }

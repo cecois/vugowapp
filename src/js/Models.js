@@ -1,4 +1,4 @@
-var Download = Backbone.Model.extend({defaults: {},initialize: function(){return this;}}); //dl
+var Download = Backbone.Model.extend({defaults: {stamp:null},initialize: function(){return this;}}); //dl
 
 var DownloadExtent = Backbone.Model.extend({
 	defaults: {
@@ -593,10 +593,47 @@ var Home = Backbone.Model.extend({
 
 var Util = Backbone.Model.extend({
 	initialize: function() {},
-	get_style: function(kind) {
+	carto2config: function(ogs){
+		var a = {}
+		var usr = ogs.split(".carto")[0].split("://")[1]
+		var host = ogs.split("/tables")[0]
+		var table = ogs.split("tables/")[1]
 
-		var po = .65; //poly opacity
-		var hitpo = .25; //hit poly opacity
+		a.usr=usr;a.host=host;a.table=table;
+
+		return a;
+	},
+	carto_sql_gen: function(type,ogs){
+
+// SELECT * FROM spatialtrack_poly WHERE the_geom && ST_SetSRID(ST_MakeBox2D(ST_Point(-178.8, 5.3), ST_Point(111, 70)), 4326)
+
+// var ogslug = this.model.get("ogslug")
+
+var cc=UTIL.carto2config(ogs)
+var usr = cc.usr
+,host=cc.host
+,table=cc.table;
+
+var select=(typeof type !== 'undefined' && type =="count")?"select count(*) as count":"select *";
+
+
+// "the_geom && ST_SetSRID(ST_MakeBox2D(ST_Point("+map.getBounds().getSouthWest().lng+", "+map.getBounds().getSouthWest().lat+"), ST_Point("+map.getBounds().getNorthEast().lng+", "+map.getBounds().getNorthEast().lat+")), 4326)"
+var where=(appDLEX.get("clip")==1)?" where the_geom && ST_SetSRID(ST_MakeBox2D(ST_Point("+map.getBounds().getSouthWest().lng+", "+map.getBounds().getSouthWest().lat+"), ST_Point("+map.getBounds().getNorthEast().lng+", "+map.getBounds().getNorthEast().lat+")), 4326)":'';
+
+sql = select+" from "+table+where+";";
+
+
+// var durl = host+"/api/v2/sql?";
+if(type !== 'count'){
+	return encodeURIComponent(sql);} else {
+		return sql;
+	}
+},
+get_style: function(kind) {
+
+
+		var po = Config.POLYOPACITY; //poly opacity
+		var hitpo = po*.5; //hit poly opacity
 
 		var randomstyles = [{
 			"color": "#394834",
@@ -707,6 +744,13 @@ var Util = Backbone.Model.extend({
 			"fillOpacity": hitpo,
 			radius: 22
 		}
+		var stylefpo = {
+			"color": "black",
+			"fillColor": "purple",
+			"weight": 4,
+			"opacity": .9,
+			"fillOpacity": hitpo
+		}
 		var stylehithover = {
 			"color": "white",
 			"fillColor": "gray",
@@ -734,6 +778,16 @@ var Util = Backbone.Model.extend({
 			radius: 22
 		}
 
+		var stylefpt = {
+			radius: 8,
+			fillColor: "purple",
+			color: "black",
+			weight: 1,
+			opacity: .6,
+			fillOpacity: 0.2,
+		};
+
+
 		// var maxh = randomstyles.length;
 		// var whichh = _.random(0, maxh);
 		// var stylehit=randomstyles[whichh]
@@ -744,6 +798,12 @@ var Util = Backbone.Model.extend({
 		switch (kind) {
 			case "active":
 			return stylehigh
+			break;
+			case "fepoly":
+			return stylefpo
+			break;
+			case "point":
+			return stylefpt
 			break;
 			case "aoi":
 			return styleaoi
