@@ -1,7 +1,16 @@
 <li class="col-lg-12 pull-left">
-<h3>This is Fake. But it Works. And it's Free.</h3></li>
-<li class="homeli pull-left">2nd lorem ipsum2nd lorem ipsum2nd lorem ipsum2nd lorem ipsum2nd lorem ipsum2nd lorem ipsum2nd lorem ipsum </li>
-<li class="homeli pull-left">3rd lorem ipsum3rd lorem ipsum3rd lorem ipsum3rd lorem ipsum3rd lorem ipsum3rd lorem ipsum3rd lorem ipsum </li>
-<li class="homeli pull-left">4th lorem ipsum4th lorem ipsum4th lorem ipsum4th lorem ipsum4th lorem ipsum4th lorem ipsum4th lorem ipsum </li>
-<li class="homeli pull-left">5th lorem ipsum5th lorem ipsum5th lorem ipsum5th lorem ipsum5th lorem ipsum5th lorem ipsum5th lorem ipsum </li>
-<li class="homeli pull-left">6th lorem ipsum6th lorem ipsum6th lorem ipsum6th lorem ipsum6th lorem ipsum6th lorem ipsum6th lorem ipsum </li>
+	<h3>This is a demo.</h3></li>
+	<li class="col-lg-3"></li>
+	<li class="col-lg-6" style="font-size:1.6em;text-align:justify-all;">This is a spatial data download web application very loosely coupled to a sandbox <a href="http://vufind.org">VuFind</a> instance that, in turn, only contains records from a <a href="http://carto.com">Carto.com</a> account.</li>
+	<li class="col-lg-3"></li>
+	<li class="homeli pull-left"><h4>Why do that? (Pt. 1)</h4>1) to illustrate that spatial data download apps don't need to be utterly terrible; they just typically are. Certainly there are complexities and challenges that prevent clean, easy, beautiful data download mechanisms. But this application, built custom from the ground-up using modern web techniques and technologies, abstracts much of that complexity and presents a minimal, clean environment in which to identify and then download data.</li>
+	<li class="homeli pull-left"><h4>Why do that? (Pt. 2)</h4>2) to reproduce publicly something I built in a closed environment and cannot display; in order to present my work as part of a portfolio, as it were, I had to rebuild from scratch (and memory!) the structures, methods (partially) and functionality (partially) of the original.</li>
+	<li class="homeli pull-left"><h4>Is This Identical?</h4> To the system I built in that closed environment? Pretty much, yes. The styling and branding has been largely stripped, of course. And where the original queries a Solr instance that indexes custom MongoDB metadata, this queries against a VuFind-managed Solr index. And where the original delivers many TB of raster (disk, GeoServer) and vector (PostGIS) data, this of course speaks to a much-simplified data store (limited to one user's Carto account). Oh, also in the original there is a download "job" mechanism that maintains download profiles (to which users can return, redraw bounds, re-download etc.). This doesn't. But otherwise yes.
+	</li>
+	<li class="homeli pull-left">
+<h4>What's all this about VuFind and Solr and Carto?</h4>
+The original is built to query a Solr that indexes custom metadata stored in a MongoDB instance. That's atypical, especially for libraries and other agencies that might be inclined to build this type of thing. Some libraries are opting to go with GeoBlacklight or some other system. Which is great. Really. But a little complex if you're just a shop that wants to add some records to a catalog and then have a rich, spatially-aware environment to deliver them.*
+	</li>
+	<li class="homeli pull-left">
+	* Of note here is that the original app talks to a quite-rich API (for things like envelopes, download job extents, and other spatially-aware routines). That's been stripped here given we're only speaking to Carto assets. In a true production environment it is advised to have an API there to handle more advanced functionalities (that you'll inevitably be asked to provide your researchers).
+	</li>

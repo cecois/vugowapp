@@ -1629,7 +1629,7 @@ var DlexToggleView = Backbone.View.extend({
 var PanelMenuView = Backbone.View.extend({
 
 	el: $("#navContainer .tabbable .nav-tabs"),
-	template: Handlebars.templates['panelMenuViewTpl'],
+	template: Handlebars.templates['PanelMenuViewTpl'],
 	events: {
 		"click li": function(e) {
 			var pid = $(e.currentTarget).attr("data-id")

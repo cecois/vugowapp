@@ -1,5 +1,5 @@
 var Config={
-	"MODE":"apt",
+	"MODE":"bus",
 	"POINTBUFFER":500,
 	"SOLRROOT":"http://localhost:8989/solr/#/biblio/",
 	"POLYOPACITY":.85,
