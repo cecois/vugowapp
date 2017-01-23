@@ -12,7 +12,8 @@ var Active = Backbone.Collection.extend({
 	},
 		url: function() {
 		if (appState.get("active") !== "nil" && appState.get("active") !== null && typeof appState.get("active")!=='undefined') {
-			return "http://localhost:8989/solr/biblio/select/?version=2.2&rows=1&indent=off&wt=json&json.wrf=cwmccallback&q=_id:" + appState.get("active")
+			// return "http://localhost:8989/solr/biblio/select/?version=2.2&rows=1&indent=off&wt=json&json.wrf=cwmccallback&q=_id:" + appState.get("active")
+			return Config.SOLRROOT+"select/?version=2.2&rows=1&indent=off&wt=json&json.wrf=cwmccallback&q=_id:" + appState.get("active")
 		}
 		return null
 	},
@@ -49,8 +50,8 @@ var Hitz = Backbone.Collection.extend({
 
 		// var q = (preq!==null && typeof preq !== 'undefined') ? preq : "*";
 
-		// return "http://localhost:8989/solr/biblio/select/?version=2.2&start=0&rows="+numrows+"&indent=off&wt=json&json.wrf=cwmccallback&q="+q
-		return "http://localhost:8989/solr/biblio/select/?version=2.2&rows=50&indent=off&wt=json&json.wrf=cwmccallback&q=" + quQuery.get_query()
+		// return "http://localhost:8989/solr/biblio/select/?version=2.2&rows=50&indent=off&wt=json&json.wrf=cwmccallback&q=" + quQuery.get_query()
+		return Config.SOLRROOT+"select/?version=2.2&rows=50&indent=off&wt=json&json.wrf=cwmccallback&q=" + quQuery.get_query()
 	},
 	initialize: function(options) {
 		options || (options = {});
