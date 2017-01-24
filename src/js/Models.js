@@ -232,7 +232,6 @@ var TriageCoordz = Backbone.Model.extend({
 		console.log("217:"); console.log(this);
 
 		if (this.get("type") == "radius") {
-			console.log("217:radius")
 			var coordz = this.get("coordzin").split(",")
 			var lon = coordz[0]
 			var lat = coordz[1]
@@ -436,6 +435,7 @@ var AOI = Backbone.Model.extend({
 var State = Backbone.Model.extend({
 	defaults: {
 		"downout": "out",
+		"non":0,
 		"slug": "home",
 		"bbox": "-149.94140625000003,13.239945499286312,82.44140625000001,66.23145747862573",
 		"layers": [],
@@ -453,7 +453,8 @@ var State = Backbone.Model.extend({
 	},
 	initialize: function(options) {
 		options || (options = {});
-		this.bind("change:layers", this.layerize, this)
+		this.on('change:non', this.layerize, this)
+		// this.listenTo(this,'change:non', this.layerize)
 		return this
 	},
 	catchzoomz: function(){
@@ -496,14 +497,16 @@ toggle: function(which) {
 },
 	layerize: function() { // we don't trust the incoming layers arr to always be clean
 
+console.log("im layerize in appstate, hi");
 		var intr = _.intersection(this.get("layers"), mapBaseLayers.pluck("name")) // get those that happen to be baselayers
 
 		var keepr = intr.length > 0 ? intr[0] : mapBaseLayers.findWhere({
 			active: true
 		}).get("name"); // keep just the first one or maybe none of them were baselayers
-		var scrubd = _.difference(this.get("layers"), mapBaseLayers.pluck("name")) // either way isolate the non-baselayers
+		var scrubd = _.unique(_.difference(this.get("layers"), mapBaseLayers.pluck("name"))) // either way isolate the non-baselayers
 		var prepd = [keepr]
 
+console.log("scrubd:");console.log(scrubd);
 
 		this.set({
 			layers: _.union(prepd, scrubd)
@@ -747,7 +750,7 @@ get_style: function(kind) {
 		var stylefpo = {
 			"color": "black",
 			"fillColor": "purple",
-			"weight": 4,
+			"weight": 2,
 			"opacity": .9,
 			"fillOpacity": hitpo
 		}

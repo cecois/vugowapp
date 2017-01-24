@@ -697,7 +697,7 @@ var QueryView = Backbone.View.extend({
 		"click .toolbar-hitz-zoom": "zoomall",
 		"click .toolbar-hit-trigger.toolbar-hit-trigger-extent": "zoom",
 		"click .toolbar-hit-trigger.toolbar-hit-trigger-download": "download_triage",
-		"click .toolbar-hit-trigger.toolbar-hit-trigger-preview": "preview",
+		"click .toolbar-hit-trigger.toolbar-hit-trigger-preview": "preview_triage",
 		"click .toolbar-hitz-hide": "hide"
 	},
 	initialize: function() {
@@ -755,8 +755,36 @@ activate: function(e){
 	return this
 
 },
-preview: function(e){
+preview_triage: function(e){
 
+// watch for state.layers changes (specifically p: prefixeds)
+
+if(typeof e == 'object'){
+
+	var pdid = "p:"+$(e.currentTarget).parents('.hit-wrapper').attr('data-id'); // note the p prefix - State uses this to smartly divide the layer array
+
+var lz = appState.get("layers")
+lz.push(pdid);
+appState.set({layers:lz,non:appState.get("non")+1})
+}
+
+
+	// var am = quHz.findWhere({_id:did});
+	
+	// appActivity.set({message:"sniffing format..."})
+	// var grt = am.get("geo_render_type")
+	// var grt = (am.get("geo_render_type")!=='undefined')?am.get("geo_render_type"):null;
+
+	// if(grt==null){
+	// 	appActivity.set({hang:true,message:"no web-renderable format"})} else {
+		// appActivity.set({message:"attempting render where renderable format = "+grt})
+		// appPreev.set({gurl:am.get("geo_render_url"),gso:am.get("geo_source")});
+		// }
+
+		return this
+
+	},
+	previewLocal: function(e){
 
 
 	did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
