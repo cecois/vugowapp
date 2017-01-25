@@ -706,6 +706,7 @@ var QueryView = Backbone.View.extend({
 		this.listenTo(this.collection, 'sync', this.render);
 		this.listenTo(this.collection, 'change', this.render);
 		this.listenTo(appState, 'change:downout', this.render);
+		this.listenTo(appState, 'change:layers', this.preview);
 		return this
 			// var moptions={keyboard:true,show:false}; $("#triageContainer").modal(moptions);
 			// this.render()
@@ -787,17 +788,19 @@ appState.set({layers:lz,non:appState.get("non")+1})
 	previewLocal: function(e){
 
 
-	did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
-	var am = quHz.findWhere({_id:did});
+var preevs = _.find(appState.get("layers"),function(l){
+	return (l.substring(0,2)=='p:');
+})
+	// var am = quHz.findWhere();
 	
-	appActivity.set({message:"sniffing format..."})
+	// appActivity.set({message:"sniffing format..."})
 	// var grt = am.get("geo_render_type")
 	// var grt = (am.get("geo_render_type")!=='undefined')?am.get("geo_render_type"):null;
 
 	// if(grt==null){
 	// 	appActivity.set({hang:true,message:"no web-renderable format"})} else {
 		// appActivity.set({message:"attempting render where renderable format = "+grt})
-		appPreev.set({gurl:am.get("geo_render_url"),gso:am.get("geo_source")});
+// appPreev.set({gurl:am.get("geo_render_url"),gso:am.get("geo_source")});
 		// }
 
 		return this
