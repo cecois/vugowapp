@@ -706,7 +706,7 @@ var QueryView = Backbone.View.extend({
 		this.listenTo(this.collection, 'sync', this.render);
 		this.listenTo(this.collection, 'change', this.render);
 		this.listenTo(appState, 'change:downout', this.render);
-		this.listenTo(appState, 'change:layers', this.preview);
+		this.listenTo(appState, 'change', this.preview);
 		return this
 			// var moptions={keyboard:true,show:false}; $("#triageContainer").modal(moptions);
 			// this.render()
@@ -764,11 +764,15 @@ if(typeof e == 'object'){
 
 	var pdid = "p:"+$(e.currentTarget).parents('.hit-wrapper').attr('data-id'); // note the p prefix - State uses this to smartly divide the layer array
 
+} else {
+	// incoming e is just a predefined id
+	var pdid = "p:"+e
+}
+
+
 var lz = appState.get("layers")
 lz.push(pdid);
 appState.set({layers:lz,non:appState.get("non")+1})
-}
-
 
 	// var am = quHz.findWhere({_id:did});
 	
@@ -785,14 +789,21 @@ appState.set({layers:lz,non:appState.get("non")+1})
 		return this
 
 	},
-	previewLocal: function(e){
+	preview: function(e){
 
 
 var preevs = _.find(appState.get("layers"),function(l){
 	return (l.substring(0,2)=='p:');
 })
-	// var am = quHz.findWhere();
-	
+// console.log("preevs:");console.log(preevs);
+// console.log("search fo model like this:");console.log(quHz.models[3]);
+if(typeof preevs !== 'undefined'){
+
+console.log("gunna tryta find a mod w/ _id:");console.log(preevs);
+
+	var ah = quHz.findWhere({_id:preevs});
+
+	console.log("ah:");console.log(ah);}
 	// appActivity.set({message:"sniffing format..."})
 	// var grt = am.get("geo_render_type")
 	// var grt = (am.get("geo_render_type")!=='undefined')?am.get("geo_render_type"):null;
