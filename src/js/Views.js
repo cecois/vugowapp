@@ -801,18 +801,19 @@ if(typeof preevs !== 'undefined'){
 
 console.log("gunna tryta find a mod w/ _id:");console.log(preevs);
 
-	var ah = quHz.findWhere({_id:preevs});
+	var ah = quHz.findWhere({_id:preevs.split("p:")[1]});
 
-	console.log("ah:");console.log(ah);}
-	// appActivity.set({message:"sniffing format..."})
-	// var grt = am.get("geo_render_type")
-	// var grt = (am.get("geo_render_type")!=='undefined')?am.get("geo_render_type"):null;
+	// console.log("ah:");console.log(ah);}
+	appActivity.set({message:"sniffing format..."})
+	var grt = ah.get("geo_render_type")
+	var grt = (ah.get("geo_render_type")!=='undefined')?ah.get("geo_render_type"):null;
 
-	// if(grt==null){
-	// 	appActivity.set({hang:true,message:"no web-renderable format"})} else {
-		// appActivity.set({message:"attempting render where renderable format = "+grt})
-// appPreev.set({gurl:am.get("geo_render_url"),gso:am.get("geo_source")});
-		// }
+	if(grt==null){
+		appActivity.set({hang:true,message:"no web-renderable format"})} else {
+		appActivity.set({message:"attempting render where renderable format = "+grt})
+appPreev.set({gurl:ah.get("geo_render_url"),gso:ah.get("geo_source")});
+		}
+	}
 
 		return this
 
