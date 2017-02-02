@@ -219,6 +219,9 @@ var PreeView = Backbone.View.extend({
 		,host=cc.host
 		,table=cc.table;		
 
+console.log("usr:");console.log(usr)
+console.log("host:");console.log(host)
+console.log("table:");console.log(table)
 
 		appActivityView.stfu()
 
@@ -792,42 +795,41 @@ appState.set({layers:lz,non:appState.get("non")+1})
 	preview: function(e){
 
 
-var preevs = _.find(appState.get("layers"),function(l){
-	return (l.substring(0,2)=='p:');
-})
-// console.log("preevs:");console.log(preevs);
-// console.log("search fo model like this:");console.log(quHz.models[3]);
-if(typeof preevs !== 'undefined'){
+		var preev = quHz.findWhere({_id:_.find(appState.get("layers"),function(l){return (l.substring(0,2)=='p:');}).split("p:")[1]});
 
-console.log("gunna tryta find a mod w/ _id:");console.log(preevs);
+if(typeof preev !== 'undefined'){
 
-	var ah = quHz.findWhere({_id:preevs.split("p:")[1]});
+
+console.log("preev:")
+console.log(preev)
+
+	// var ah = quHz.findWhere({_id:preevs.split("p:")[1]});
 
 	// console.log("ah:");console.log(ah);}
 	appActivity.set({message:"sniffing format..."})
-	var grt = ah.get("geo_render_type")
-	var grt = (ah.get("geo_render_type")!=='undefined')?ah.get("geo_render_type"):null;
+	var grt = preev.get("geo_render_type")
+	var grt = (preev.get("geo_render_type")!=='undefined')?preev.get("geo_render_type"):null;
 
 	if(grt==null){
 		appActivity.set({hang:true,message:"no web-renderable format"})} else {
-		appActivity.set({message:"attempting render where renderable format = "+grt})
-appPreev.set({gurl:ah.get("geo_render_url"),gso:ah.get("geo_source")});
+			appActivity.set({message:"attempting render where renderable format = "+grt})
+			appPreev.set({gurl:preev.get("geo_render_url"),gso:preev.get("geo_source")});
 		}
 	}
 
-		return this
+	return this
 
-	},
-	download_triage: function(e){
-
-
-		did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
-		var am = quHz.findWhere({_id:did});
+},
+download_triage: function(e){
 
 
+	did = $(e.currentTarget).parents('.hit-wrapper').attr('data-id')
+	var am = quHz.findWhere({_id:did});
 
 
-		appActivity.set({message:"sniffing source &amp; format..."})
+
+
+	appActivity.set({message:"sniffing source &amp; format..."})
 
 // here's future switch for raster or other sources w/ different APIs
 // if(am.get("geo_source")=="carto"){
