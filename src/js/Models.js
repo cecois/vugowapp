@@ -497,7 +497,7 @@ toggle: function(which) {
 },
 	layerize: function() { // we don't trust the incoming layers arr to always be clean
 
-console.log("im layerize in appstate, hi");
+	console.log("im layerize in appstate, hi");
 		var intr = _.intersection(this.get("layers"), mapBaseLayers.pluck("name")) // get those that happen to be baselayers
 
 		var keepr = intr.length > 0 ? intr[0] : mapBaseLayers.findWhere({
@@ -506,7 +506,7 @@ console.log("im layerize in appstate, hi");
 		var scrubd = _.unique(_.difference(this.get("layers"), mapBaseLayers.pluck("name"))) // either way isolate the non-baselayers
 		var prepd = [keepr]
 
-console.log("scrubd:");console.log(scrubd);
+		console.log("scrubd:");console.log(scrubd);
 
 		this.set({
 			layers: _.union(prepd, scrubd)
@@ -517,6 +517,21 @@ console.log("scrubd:");console.log(scrubd);
 			active: true
 		}).get("name") !== keepr) {
 			mapBaseLayers.switch(keepr)
+		}
+
+		// var peez=appState.get("layers").find(function(L){return (L.substring(0,2)=="p:");}).split("p:")[1]
+
+		var P = (scrubd.length>0)?quHz.findWhere({_id:scrubd[0].split("p:")[1]}):null;
+
+		console.log("P")
+		console.log(P)
+
+		if(P){
+
+			appPreev.set({
+				gurl:P.geo_render_url,
+				gso:P.geo_source
+			})
 		}
 
 		return this
