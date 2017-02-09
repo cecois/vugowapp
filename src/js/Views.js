@@ -163,55 +163,9 @@ var PreeView = Backbone.View.extend({
 		this.listenTo(this.model, 'change', this.render);
 		return this
 	},
-	// subrender_esri_arcgis: function(){
-
-	// 	var floormax = 100
-	// 	var mrc = 1000
-	// 	var gurl=this.model.get("gurl")+"/0"
-	// 	var gtyp=this.model.get("gtyp")
-	// 	var esr = L.esri.featureLayer({precision:1,fields:['FID', 'type', 'title'],url: gurl.replace("http:", "https:"),simplifyFactor:100 })
-	// 	.on("loading",function(){
-	// 		var msg = "Attempting to render an [over]simplified sample";
-	// 		appActivity.set({message:msg})
-	// 	})
-	// 	.once("load",function(gtyp){
-	// 		var msg="testing result..."
-	// 		appActivity.set({message:msg})
-	// 		if(_.keys(groupPREEV.getLayers()[0]._layers)<=0){
-	// 			var msg = "No features :-/ The original server is probably fine though."
-	// 			appActivity.set({message:msg})
-
-	// 		} else {
-	// 			var msg = "check the map for sample features"
-	// 			appActivity.set({message:msg,hangtime:6,hang:true})
-	// 		}
-	// 	})
-	// 	.addTo(groupPREEV)
-
-	// 	return this
-	// },
-	// subrender_wms: function(){
-
-	// 	var gurl=this.model.get("gurl").split("?")[0]
-	// 	var gtyp=this.model.get("gtyp")
-
-	// 	var msg = "chopped url to "+gurl
-	// 	console.log(msg)
-	// 	appActivity.set({message:msg})
-
-	// 	var wmsl = L.tileLayer.wms("http://services.azgs.az.gov/ArcGIS/services/OneGeology/AZGS_HIGS_Geology/MapServer/WMSServer", {
-	// 		layers: 'US-HI_HIGS_250k_Lithology',
-	// 		format: 'image/png',
-	// 		transparent: true,
-	// 		attribution: "fake attrib"
-	// 	}).addTo(groupPREEV)
-
-
-	// 	return this
-	// },
-
 	subrender_carto: function(){
 
+		console.info("we made subrender_carto at least")
 		var ogslug=this.model.get("gurl")
 
 		var cc=UTIL.carto2config(ogslug)
@@ -219,9 +173,9 @@ var PreeView = Backbone.View.extend({
 		,host=cc.host
 		,table=cc.table;		
 
-console.log("usr:");console.log(usr)
-console.log("host:");console.log(host)
-console.log("table:");console.log(table)
+		console.log("usr:");console.log(usr)
+		console.log("host:");console.log(host)
+		console.log("table:");console.log(table)
 
 		appActivityView.stfu()
 
@@ -284,7 +238,8 @@ console.log("table:");console.log(table)
 
 		groupPREEV.clearLayers()
 		var gt = this.model.get("gso")
-
+		console.info("gt:")
+		console.log(gt);
 		switch(gt) {
 			case "carto":
 			return this.subrender_carto()
@@ -709,7 +664,7 @@ var QueryView = Backbone.View.extend({
 		this.listenTo(this.collection, 'sync', this.render);
 		this.listenTo(this.collection, 'change', this.render);
 		this.listenTo(appState, 'change:downout', this.render);
-		this.listenTo(appState, 'change', this.preview);
+		// this.listenTo(appState, 'change:layers', this.preview);
 		return this
 			// var moptions={keyboard:true,show:false}; $("#triageContainer").modal(moptions);
 			// this.render()
@@ -772,11 +727,12 @@ if(typeof e == 'object'){
 	var pdid = "p:"+e
 }
 
+if(pdid.indexOf("p:">=0)){
 
-var lz = appState.get("layers")
-lz.push(pdid);
-appState.set({layers:lz,non:appState.get("non")+1})
-
+	var lz = appState.get("layers")
+	lz.push(pdid);
+	appState.set({layers:lz,non:appState.get("non")+1})
+}
 	// var am = quHz.findWhere({_id:did});
 	
 	// appActivity.set({message:"sniffing format..."})
@@ -792,16 +748,20 @@ appState.set({layers:lz,non:appState.get("non")+1})
 		return this
 
 	},
-	preview: function(e){
+	preview_brok: function(e){
 
 
-		var preev = quHz.findWhere({_id:_.find(appState.get("layers"),function(l){return (l.substring(0,2)=='p:');}).split("p:")[1]});
+		if(appState){
+		// var peez = _.find(appState.get("layers"),function(l){return (l.substring(0,2)=='p:');}).split("p:")[1];
+		var peez=appState.get("layers").find(function(L){return (L.substring(0,2)=="p:");}).split("p:")[1]
 
-if(typeof preev !== 'undefined'){
+		var preev = (peez)?quHz.findWhere({_id:peez}):null;
+
+		if(typeof preev !== null){
 
 
-console.log("preev:")
-console.log(preev)
+			console.log("preev:")
+			console.log(preev)
 
 	// var ah = quHz.findWhere({_id:preevs.split("p:")[1]});
 
@@ -815,7 +775,7 @@ console.log(preev)
 			appActivity.set({message:"attempting render where renderable format = "+grt})
 			appPreev.set({gurl:preev.get("geo_render_url"),gso:preev.get("geo_source")});
 		}
-	}
+	}}
 
 	return this
 
