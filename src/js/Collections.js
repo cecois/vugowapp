@@ -10,7 +10,7 @@ var Active = Backbone.Collection.extend({
 		// });
 
 	},
-		url: function() {
+	url: function() {
 		if (appState.get("active") !== "nil" && appState.get("active") !== null && typeof appState.get("active")!=='undefined') {
 			// return "http://localhost:8989/solr/biblio/select/?version=2.2&rows=1&indent=off&wt=json&json.wrf=cwmccallback&q=_id:" + appState.get("active")
 			return Config.SOLRROOT+"select/?version=2.2&rows=1&indent=off&wt=json&json.wrf=cwmccallback&q=_id:" + appState.get("active")
@@ -30,9 +30,9 @@ var Active = Backbone.Collection.extend({
 		options.jsonpCallback = 'cwmccallback';
 		return Backbone.sync(method, collection, options)
 	},
-		parse: function(data) {
+	parse: function(data) {
 
-			console.log("data in parse of active:"); console.log(data);
+		console.log("data in parse of active:"); console.log(data);
 
 		return data.response.docs[0]
 	}
@@ -86,9 +86,9 @@ var Hitz = Backbone.Collection.extend({
 
 			*/
 
-if(typeof this.models[0] !== 'undefined'){
-var mz = this.models[0]
-mz.trigger('change', mz);}
+			if(typeof this.models[0] !== 'undefined'){
+				var mz = this.models[0]
+				mz.trigger('change', mz);}
 
 			// this.models[0].set({
 			// 	active: false
@@ -106,7 +106,7 @@ mz.trigger('change', mz);}
 			silent: true
 		});
 		return this
-			.activate()
+		.activate()
 	},
 	prefetch: function() {
 
@@ -115,7 +115,7 @@ mz.trigger('change', mz);}
 		// })
 
 		return this
-			.fetch()
+		.fetch()
 
 	},
 	sync: function(method, collection, options) {
@@ -148,6 +148,7 @@ var BaseLayersCollection = Backbone.Collection.extend({
 	},
 	activate: function(nl) {
 
+		console.log("activate nl:");console.log(nl);
 
 		var nm = this.findWhere({
 			name: nl
@@ -161,6 +162,7 @@ var BaseLayersCollection = Backbone.Collection.extend({
 	},
 	switch: function(nn) {
 
+		console.log("switch nn:");console.log(nn);
 
 		this.invoke('set', {
 			"active": false
@@ -168,7 +170,7 @@ var BaseLayersCollection = Backbone.Collection.extend({
 			silent: true
 		});
 		return this
-			.activate(nn)
+		.activate(nn)
 	},
 
 });
@@ -226,7 +228,7 @@ var PanelsCollection = Backbone.Collection.extend({
 			silent: true
 		});
 		return this
-			.activate()
+		.activate()
 	},
 
 });
