@@ -1000,11 +1000,16 @@ var BaseMapsMenuView = Backbone.View.extend({
 
 		var n = $(e.currentTarget).attr("data-id")
 
+		console.log("n:");console.log(n);
+
 		var aslz = appState.get("layers")
 
 		var newaslz = _.reject(aslz, function(l) { //get rid of the one(s) that are baselayers cuz we gonna add a fresh one
 			return _.contains(mapBaseLayers.pluck("name"), l)
 		});
+
+		console.log("newaslz:")
+		console.log(newaslz)
 
 		// aslz.push(n)
 		newaslz.push(n)
@@ -1013,10 +1018,14 @@ var BaseMapsMenuView = Backbone.View.extend({
 		});
 		// this.collection.switch(n)
 
+		console.log("appstatelayers:")
+		console.log(appState.get("layers"))
+
 		return this
 
 	},
 	render: function() {
+		console.log("in render at 1020")
 		$(this.el).html(this.template({
 
 			rows: this.collection.toJSON()
