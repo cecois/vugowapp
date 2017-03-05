@@ -1,0 +1,25 @@
+{
+  "name": "jquery",
+  "repo": "components/jquery",
+  "version": "3.1.1",
+  "description": "jQuery component",
+  "license": "MIT",
+  "keywords": [
+    "jquery",
+    "component"
+  ],
+  "main": "jquery.js",
+  "scripts": [
+    "jquery.js",
+    "jquery.min.js"
+  ],
+  "files": [
+    "jquery.min.map"
+  ],
+  "readme": "jQuery Component\n================\n\nShim [repository](https://github.com/components/jquery) for the [jQuery](http://jquery.com).\n\nIf you're looking for jquery-migrate: It got it's [own repository](https://github.com/components/jquery-migrate) since jQuery v3.0.0.\n\nPackage Managers\n----------------\n\n* [Bower](http://bower.io/): `jquery`\n* [Component](https://github.com/component/component): `components/jquery`\n* [Composer](http://packagist.org/packages/components/jquery): `components/jquery`\n* [spm](http://spmjs.io/package/jquery): `jquery`\n",
+  "_id": "jquery@3.1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jquery/jquery-dist.git"
+  }
+}

@@ -1,6 +1,7 @@
 var Config={
-	"MODE":"bus",
+	"MODE":"apt",
 	"POINTBUFFER":500,
+	"APIKEY":0,
 	"SOLRROOT":"http://localhost:8080/solr/biblio/",
 	"POLYOPACITY":.85,
 	"CARTO_USER":"cecmcgee",
