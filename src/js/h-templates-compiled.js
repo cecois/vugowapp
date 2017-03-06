@@ -1,5 +1,20 @@
 (function() {
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
+templates['BaseMapsMenuViewTpl'] = template({"1":function(depth0,helpers,partials,data) {
+  var lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "<li class=\"mnu-basemap-item\" data-id=\""
+    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
+    + "\">\n<img class=\""
+    + escapeExpression(lambda((depth0 != null ? depth0.active : depth0), depth0))
+    + "\" src=\"images/thumbs/"
+    + escapeExpression(lambda((depth0 != null ? depth0.name : depth0), depth0))
+    + ".png\" height=\"\" width=\"\">\n</li>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<ul class=\"list-inline\" id=\"mnu-basemaps\">\n";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.rows : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</ul>";
+},"useData":true});
 templates['PanelMenuViewTpl'] = template({"1":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "<li data-id=\""

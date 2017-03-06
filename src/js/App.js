@@ -1,13 +1,7 @@
 /* ------------- GLOBALS -------------------------------------- */
 
 
-// window.map = new L.Map('map', {
-//     zoomControl: false,
-//     center: [51.505, -0.09],
-//     // center: [42.53689, -71.22986],
-//     attributionControl: false,
-//     zoom: 7
-// })
+
 
 
 // UTILITY CLASS (CONVERSIONS/SNIFFS/ETC.)
@@ -38,8 +32,14 @@ window.appStateView  = new StateView({
 })
 
 // CLOUDMADE ET AL
-// mapBaseLayers = new BaseLayersCollection(baselayerz.layers);
+mapBaseLayers = new BaseLayersCollection(baselayerz.layers);
 
+    window.appBaseMapsMenuView = new BaseMapsMenuView({
+        collection: mapBaseLayers
+    });
+    window.mapBaseMapView = new BaseMapView({
+        collection: mapBaseLayers
+    });
 
     // and a menu view for stylish swappin'
     // window.appBaseMapsMenuView = new BaseMapsMenuView({

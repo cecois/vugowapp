@@ -1,6 +1,6 @@
 var State = Backbone.Model.extend({
 	defaults: {
-		"downout": "out",
+		"downout": "down",
 		"slug": "home",
 		"bbox": null,
 		"layers": null,

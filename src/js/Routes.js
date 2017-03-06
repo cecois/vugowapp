@@ -9,7 +9,6 @@ initialize: function(options) {
 	},
 	update: function(){
 
-console.log("updating Route...");
 if(appState.hasChanged()==true){
 appRoute.navigate(appState.update(), {trigger: true,replace: true});} else {
 	console.log("state has not changed, no navigation required");
@@ -32,8 +31,8 @@ console.log("slug:"+slug+";page:"+page+";query:"+query+";layers:"+layers+";downo
 		var zquery = ((query!==null) && (query!=="nil") && (query)) ? query : "*:*";
 		
 		if( layers=="nil" || typeof layers == 'undefined' || layers == null){
-// zlayers=mapBaseLayers.findWhere({active:true}).get("name")
-zlayersa="dummy_set_manually"
+zlayersa=mapBaseLayers.findWhere({active:true}).get("name")
+// zlayersa="dummy_set_manually"
 zlayers=new Array(zlayersa)
 
 		} else if(layers.indexOf(",")>-1){
@@ -43,7 +42,7 @@ zlayers=new Array(zlayersa)
 			zlayers=new Array(layers)
 		}
 
-		var zdownout = (typeof downout !== 'undefined' && downout!==null && downout !== 'nil') ? downout : "out";
+		var zdownout = (typeof downout !== 'undefined' && downout!==null && downout !== 'nil') ? downout : "down";
 		
 		var zbbox = (typeof bbox !== 'undefined' && bbox!==null && bbox!=="null" && bbox!=="nil") ? bbox : appState.get("bbox");
 
