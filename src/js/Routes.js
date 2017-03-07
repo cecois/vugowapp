@@ -31,16 +31,18 @@ console.log("slug:"+slug+";page:"+page+";query:"+query+";layers:"+layers+";downo
 		var zquery = ((query!==null) && (query!=="nil") && (query)) ? query : "*:*";
 		
 		if( layers=="nil" || typeof layers == 'undefined' || layers == null){
-zlayersa=mapBaseLayers.findWhere({active:true}).get("name")
-// zlayersa="dummy_set_manually"
-zlayers=new Array(zlayersa)
+zlayername=mapBaseLayers.findWhere({active:true}).get("name")
+// zlayer="dummy_set_manually"
 
 		} else if(layers.indexOf(",")>-1){
 
-			zlayers=layers.split(",")
+			zlayername=layers.split(",")[0]
 		} else {
-			zlayers=new Array(layers)
+			zlayername=layers
 		}
+
+// zlayers=new Array(zlayername)
+zlayers=zlayername
 
 		var zdownout = (typeof downout !== 'undefined' && downout!==null && downout !== 'nil') ? downout : "down";
 		
