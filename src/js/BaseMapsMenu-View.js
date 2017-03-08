@@ -8,22 +8,22 @@ var BaseMapsMenuView = Backbone.View.extend({
 	initialize: function() {
 
 		// this.collection.bind('change:active', this.render, this);
-		this.listenTo(appState,'change:layers', this.render, this);
+		this.listenTo(appState,'change:baselayer', this.render, this);
 		this.render()
 	},
 	switch: function(e) {
 
 		var n = $(e.currentTarget).attr("data-id")
 
-		var aslz = appState.get("layers")
+		// var aslz = appState.get("baselayer")
 
-		var newaslz = _.reject(aslz, function(l) { //get rid of the one(s) that are baselayers cuz we gonna add a fresh one
-			return _.contains(mapBaseLayers.pluck("name"), l)
-		});
-
-		newaslz.push(n)
+		// var newaslz = _.reject(aslz, function(l) { //get rid of the one(s) that are baselayers cuz we gonna add a fresh one
+		// 	return _.contains(mapBaseLayers.pluck("name"), l)
+		// });
+console.log("setting baselayer w/:");console.log(n);
+		// newaslz.push(n)
 		appState.set({
-			layers: newaslz
+			baselayer: n
 		});
 
 		return this

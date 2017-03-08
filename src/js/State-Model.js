@@ -3,7 +3,8 @@ var State = Backbone.Model.extend({
 		"downout": "down",
 		"slug": "home",
 		"bbox": null,
-		"layers": null,
+		"baselayer": null,
+		"overlays": null,
 		"page": "1",
 		"apikey": "0",
 		"active": null,
@@ -15,7 +16,7 @@ var State = Backbone.Model.extend({
 	initialize: function(options) {
 		options || (options = {});
 		// this.on('change:non', this.layerize, this)
-		this.on('change', this.update, this)
+		// this.on('change', this.pullurl, this)
 		return this
 	},
 	toggle: function(which) {
@@ -44,21 +45,23 @@ var State = Backbone.Model.extend({
 	return this
 
 },
-	update: function() {
+	pullurl: function() {
 
 		var uslug = this.get("slug")
 		var upage = this.get("page")
 		// var uquery = (this.get("query")==null || this.get("query")=="")?"nil":this.get("query")
 		var uquery = this.get("query")
-		// var ulayers = (this.get("layers").length>1)?_.unique(this.get("layers")).join():this.get("layers")[0]
-		var ulayers = this.get("layers")
+		// var ulayers = (this.get("baselayer").length>1)?_.unique(this.get("baselayer")).join():this.get("baselayer")[0]
+		var ublayer = this.get("baselayer")
+		console.log("ublayer.ST.56:");console.log(ublayer);
+		var uoverlays = this.get("overlays")
 		var udownout = this.get("downout")
 		// var uactive = (this.get("active")==null || this.get("active")=="")?"nil":this.get("active")
 		var uactive = this.get("active")
 // var uactive = this.get("active")
 var ubbox = this.get("bbox")
 
-var state = "#" + uslug + "/" + upage + "/" + uquery + "/" + ulayers + "/" + udownout + "/" + uactive+ "/" + ubbox
+var state = "#" + uslug + "/" + upage + "/" + uquery + "/" + ublayer + "/" + uoverlays + "/" + udownout + "/" + uactive+ "/" + ubbox
 
 return state
 

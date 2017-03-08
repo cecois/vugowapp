@@ -1,6 +1,6 @@
 var Route = Backbone.Router.extend({
 	routes: {
-		"(:slug)(/:page)(/:query)(/:layers)(/:downout)(/:active)(/:bbox)(/)":"default"
+		"(:slug)(/:page)(/:query)(/:baselayer)(/:overlays)(/:downout)(/:active)(/:bbox)(/)":"default"
 	},
 initialize: function(options) {
 		options || (options = {});
@@ -10,17 +10,17 @@ initialize: function(options) {
 	update: function(){
 
 if(appState.hasChanged()==true){
-appRoute.navigate(appState.update(), {trigger: true,replace: true});} else {
+appRoute.navigate(appState.pullurl(), {trigger: true,replace: true});} else {
 	console.log("state has not changed, no navigation required");
 }
 
 return this
 
 	},
-	default: function(slug,page,query,layers,downout,active,bbox) {
+	default: function(slug,page,query,baselayer,overlays,downout,active,bbox) {
 
 console.info("VARDUMP:");
-console.log("slug:"+slug+";page:"+page+";query:"+query+";layers:"+layers+";downout:"+downout+";active:"+active+";bbox:"+bbox);
+console.log("slug:"+slug+";page:"+page+";query:"+query+";baselayer:"+baselayer+";downout:"+downout+";active:"+active+";bbox:"+bbox);
 
 		var zslug = (typeof slug !=='undefined' && slug !== null) ? slug : "home";
 		
@@ -30,19 +30,22 @@ console.log("slug:"+slug+";page:"+page+";query:"+query+";layers:"+layers+";downo
 
 		var zquery = ((query!==null) && (query!=="nil") && (query)) ? query : "*:*";
 		
-		if( layers=="nil" || typeof layers == 'undefined' || layers == null){
-zlayername=mapBaseLayers.findWhere({active:true}).get("name")
+		var zoverlays = ((overlays!==null) && (overlays!=="nil") && (overlays)) ? overlays : null;
+		
+		// var zblayername = ( baselayer=="nil" || typeof baselayer == 'undefined' || baselayer == null) ? mapBaseLayers.findWhere({active:true}).get("name"):
+		var zblayername = ( baselayer=="nil" || typeof baselayer == 'undefined' || baselayer == null ) ? mapBaseLayers.findWhere({active:true}).get("name") : baselayer;
 // zlayer="dummy_set_manually"
 
-		} else if(layers.indexOf(",")>-1){
+		// }
+		// } else if(layers.indexOf(",")>-1){
+		// 	// here's where we can sniff out layers other than basemaps
 
-			zlayername=layers.split(",")[0]
-		} else {
-			zlayername=layers
-		}
+		// 	zlayername=layers.split(",")[0]
+		// } else {
+			// zlayername=layers
 
 // zlayers=new Array(zlayername)
-zlayers=zlayername
+// zlayers=zlayername
 
 		var zdownout = (typeof downout !== 'undefined' && downout!==null && downout !== 'nil') ? downout : "down";
 		
@@ -59,9 +62,13 @@ appState.set({
 	active:
 	(appState.get("active")!==zactive) ? zactive : appState.get("active")
 	,
+		overlays:
+	(appState.get("overlays")!==zoverlays) ? zoverlays : appState.get("overlays")
+	,
 	bbox:
 	zbbox,
-	layers:_.unique(zlayers),
+	// layers:_.unique(zlayers),
+	baselayer:zblayername,
 	query: zquery
 })
 

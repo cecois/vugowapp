@@ -5,7 +5,7 @@ var BaseLayersCollection = Backbone.Collection.extend({
 	},
 	initialize: function(options) {
 		options || (options = {});
-		this.listenTo(appState,'change:layers',this.preswitch)
+		this.listenTo(appState,'change:baselayer',this.preswitch)
 	},
 	activate: function(nl) {
 
@@ -26,24 +26,24 @@ var BaseLayersCollection = Backbone.Collection.extend({
 
 console.log("deactivating...");
 var ol = this.findWhere({active:true})
+
 console.log("ol:");console.log(ol.get("name"));
-// .set({active:false})
+ol.set({active:false},{silent:true}) //silent bc we are gonna set true next and that's gonna trigger
 
-// var tl = this.findWhere({name:_.intersection(appState.get("layers"), this.pluck("name"))[0]})
-
-// tl.set({active:true})
+var tl = this.findWhere({name:appState.get("baselayer")})
+tl.set({active:true})
 
 // console.log("target mod:");
 // console.log(tl);
 
 
 
-// 		var intr = _.intersection(appState.get("layers"), this.pluck("name")) // get those that happen to be baselayers
+// 		var intr = _.intersection(appState.get("baselayer"), this.pluck("name")) // get those that happen to be baselayers
 // console.log("intr:");console.log(intr);
 // 		var keepr = intr.length > 0 ? intr[0] : this.models.findWhere({
 // 			active: true
 // 		}).get("name"); // keep just the first one or maybe none of them were baselayers
-		// var scrubd = _.unique(_.difference(appState.get("layers"), this.pluck("name"))) // either way isolate the non-baselayers
+		// var scrubd = _.unique(_.difference(appState.get("baselayer"), this.pluck("name"))) // either way isolate the non-baselayers
 		// var prepd = intr[0]
 
 		// console.log("keepr:");console.log(keepr);
@@ -58,7 +58,7 @@ console.log("ol:");console.log(ol.get("name"));
 		// 	this.switch(keepr)
 		// }
 
-		// var peez=appState.get("layers").find(function(L){return (L.substring(0,2)=="p:");}).split("p:")[1]
+		// var peez=appState.get("baselayer").find(function(L){return (L.substring(0,2)=="p:");}).split("p:")[1]
 
 		// var P = (scrubd.length>0)?quHz.findWhere({_id:scrubd[0].split("p:")[1]}):null;
 

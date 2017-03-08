@@ -11,10 +11,10 @@ var BaseMapView = Backbone.View.extend({
 })
 		// map.setMaxBounds(UTIL.boundsFromBBOX("-180,-90,180,90"))
 		// this.listenTo(appState, 'change:bbox', this.zoom)
-		this.listenTo(appState, 'change', this.render)
-		// this.listenTo(this.collection, 'change:active', this.render)
+		// this.listenTo(appState, 'change', this.render)
+		this.listenTo(this.collection, 'change:active', this.render)
 		return this
-		// .render()
+		.render()
 	},
 	zoom: function() {
 
@@ -30,6 +30,9 @@ var BaseMapView = Backbone.View.extend({
 		var am = this.collection.findWhere({
 			active: true
 		});
+
+		console.log("am.34:");console.log(am.get("name"));
+
 		var def = (typeof am !== 'undefined')?am.get("definition"):null;
 
 		// remove global layer here first so we don't keep stacking baselayers
@@ -44,9 +47,9 @@ var BaseMapView = Backbone.View.extend({
 
 			baseLayer = new L.StamenTileLayer(def.id);
 
-			appConsole.set({
-				message: "Basemap switched to " + am.get("nom") + ", which might have zoom restrictions"
-			})
+			// appConsole.set({
+			// 	message: "Basemap switched to " + am.get("nom") + ", which might have zoom restrictions"
+			// })
 
 		} else if (def.subdomains != undefined) {
 
