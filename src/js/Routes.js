@@ -10,7 +10,7 @@ initialize: function(options) {
 	update: function(){
 
 if(appState.hasChanged()==true){
-appRoute.navigate(appState.pullurl(), {trigger: true,replace: true});} else {
+appRoute.navigate(appState.pullurl(), {trigger: true,replace: false});} else {
 	console.log("state has not changed, no navigation required");
 }
 

@@ -2,7 +2,7 @@ var State = Backbone.Model.extend({
 	defaults: {
 		"downout": "down",
 		"slug": "home",
-		"bbox": null,
+		"bbox": "3.1626892089843754,50.61113171332364,5.472564697265625,51.172455303299",
 		"baselayer": null,
 		"overlays": null,
 		"page": "1",
@@ -17,7 +17,17 @@ var State = Backbone.Model.extend({
 		options || (options = {});
 		// this.on('change:non', this.layerize, this)
 		// this.on('change', this.pullurl, this)
+		// this.listenTo(map, 'moveend', this.upbbox)
 		return this
+	},
+	upbbox: function(){
+var bbx = map.getBounds().toBBoxString();
+if(this.get("bbox")!==bbx){
+	this.set({bbox:bbx})
+}
+
+return this
+
 	},
 	toggle: function(which) {
 

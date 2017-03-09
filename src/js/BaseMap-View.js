@@ -9,6 +9,10 @@ var BaseMapView = Backbone.View.extend({
     attributionControl: false,
     zoom: 7
 })
+
+		map.on('moveend',function(f){
+			appState.upbbox();
+		});
 		// map.setMaxBounds(UTIL.boundsFromBBOX("-180,-90,180,90"))
 		// this.listenTo(appState, 'change:bbox', this.zoom)
 		// this.listenTo(appState, 'change', this.render)

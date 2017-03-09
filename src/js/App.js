@@ -5,7 +5,7 @@
 
 
 // UTILITY CLASS (CONVERSIONS/SNIFFS/ETC.)
-// window.UTIL = new Util();
+window.UTIL = new Util();
 
 /* ------------- BASELAYERS ---------------------------------------- */
     // baselayers we now keep statically right here
