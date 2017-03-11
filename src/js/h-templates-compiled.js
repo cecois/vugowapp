@@ -30,4 +30,10 @@ templates['PanelMenuViewTpl'] = template({"1":function(depth0,helpers,partials,d
   if (stack1 != null) { return stack1; }
   else { return ''; }
   },"useData":true});
+templates['QueryFormViewTpl'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "\n<div class=\"col-lg-12\">\n    <div class=\"input-group\">\n	<input type=\"text\" placeholder=\"query here for data OR locations of interest\" class=\"form-control\" value='"
+    + escapeExpression(((helper = (helper = helpers.querydisplay || (depth0 != null ? depth0.querydisplay : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"querydisplay","hash":{},"data":data}) : helper)))
+    + "'>\n      <span class=\"input-group-btn\">\n        <button id=\"bt-query\" class=\"btn btn-default\" type=\"button\">Query for Data</button>\n      </span>\n    </div><!-- /input-group -->\n  </div><!-- /.col-lg-6 -->\n\n\n";
+},"useData":true});
 })();
