@@ -1,6 +1,6 @@
 var Route = Backbone.Router.extend({
 	routes: {
-		"(:slug)(/:page)(/:query)(/:baselayer)(/:overlays)(/:downout)(/:active)(/:bbox)(/)":"default"
+		"(:slug)(/:page)(/:query)(/:baselayer)(/:aoi)(/:downout)(/:active)(/:bbox)(/)":"default"
 	},
 initialize: function(options) {
 		options || (options = {});
@@ -17,24 +17,23 @@ appRoute.navigate(appState.pullurl(), {trigger: true,replace: false});} else {
 return this
 
 	},
-	default: function(slug,page,query,baselayer,overlays,downout,active,bbox) {
+	default: function(slug,page,query,baselayer,aoi,downout,active,bbox) {
 
 console.info("VARDUMP:");
-console.log("slug:"+slug+";page:"+page+";query:"+query+";baselayer:"+baselayer+";downout:"+downout+";active:"+active+";bbox:"+bbox);
+console.log("slug:"+slug+";page:"+page+";query:"+query+";baselayer:"+baselayer+";aoi:"+aoi+";downout:"+downout+";active:"+active+";bbox:"+bbox);
 
 		var zslug = (typeof slug !=='undefined' && slug !== null) ? slug : "home";
 		
 		var zactive = (typeof active !=='undefined' && active !== null) ? active : null;
 
-		var zpage = (typeof page !=='undefined') ? page : "1";
+		var zpage = (typeof page !=='undefined' && active !== null) ? page : "1";
 
 		var zquery = ((query!==null) && (query!=="nil") && (query)) ? query : "*:*";
 		
-		var zoverlays = ((overlays!==null) && (overlays!=="nil") && (overlays)) ? overlays : null;
+		var zaoi = ((aoi!==null) && (aoi!=="nil") && (aoi)) ? aoi : null;
 		
 		// var zblayername = ( baselayer=="nil" || typeof baselayer == 'undefined' || baselayer == null) ? mapBaseLayers.findWhere({active:true}).get("name"):
 		var zblayername = ( baselayer=="nil" || typeof baselayer == 'undefined' || baselayer == null ) ? mapBaseLayers.findWhere({active:true}).get("name") : baselayer;
-// zlayer="dummy_set_manually"
 
 		// }
 		// } else if(layers.indexOf(",")>-1){
@@ -56,14 +55,15 @@ console.log("slug:"+slug+";page:"+page+";query:"+query+";baselayer:"+baselayer+"
 appState.set({
 	downout:zdownout
 	,
+	page: zpage,
 	slug:
 	(appState.get("slug")!==zslug) ? zslug : appState.get("slug")
 	,
 	active:
 	(appState.get("active")!==zactive) ? zactive : appState.get("active")
 	,
-		overlays:
-	(appState.get("overlays")!==zoverlays) ? zoverlays : appState.get("overlays")
+		aoi:
+	(appState.get("aoi")!==zaoi) ? zaoi : appState.get("aoi")
 	,
 	bbox:
 	zbbox,

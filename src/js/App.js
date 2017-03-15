@@ -29,8 +29,12 @@ window.appPanelMenuView = new PanelMenuView({collection:appPanels});
 // MANAGES PANECONTAINERS FOR ONE THING
 window.appStateView  = new StateView({model:appState})
 
-window.appQuery = new Query();
-window.appQueryView  = new QueryView({model:appQuery})
+// POTENTIAL PLACES FROM EITHER NOMINATIM OR OUR OWN PARSING OF COORDS
+// window.triagePlaces = new TriageCollection();
+
+window.appAOI = new AOI();window.appAOIView  = new AOIView({model:appAOI})
+
+window.appQuery = new Query();window.appQueryView  = new QueryView({model:appQuery})
 // CLOUDMADE ET AL
 mapBaseLayers = new BaseLayersCollection(baselayerz.layers);
 

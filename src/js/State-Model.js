@@ -5,7 +5,7 @@ var State = Backbone.Model.extend({
 		"bbox": "3.1626892089843754,50.61113171332364,5.472564697265625,51.172455303299",
 		"baselayer": null,
 		"overlays": null,
-		"page": "1",
+		"page": null,
 		"apikey": "0",
 		"active": null,
 		"query": "",
@@ -63,15 +63,14 @@ return this
 		var uquery = this.get("query")
 		// var ulayers = (this.get("baselayer").length>1)?_.unique(this.get("baselayer")).join():this.get("baselayer")[0]
 		var ublayer = this.get("baselayer")
-		console.log("ublayer.ST.56:");console.log(ublayer);
-		var uoverlays = this.get("overlays")
+		var uaoi = this.get("aoi")
 		var udownout = this.get("downout")
 		// var uactive = (this.get("active")==null || this.get("active")=="")?"nil":this.get("active")
 		var uactive = this.get("active")
 // var uactive = this.get("active")
 var ubbox = this.get("bbox")
 
-var state = "#" + uslug + "/" + upage + "/" + uquery + "/" + ublayer + "/" + uoverlays + "/" + udownout + "/" + uactive+ "/" + ubbox
+var state = "#" + uslug + "/" + upage + "/" + uquery + "/" + ublayer + "/" + uaoi + "/" + udownout + "/" + uactive+ "/" + ubbox
 
 return state
 

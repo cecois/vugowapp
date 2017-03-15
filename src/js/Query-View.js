@@ -50,10 +50,8 @@ self.timer = null;
 
 
 // grab val() of user's entry
-var qv = $(this.el).find("#inputContainer input").val()
+var qv = $(this.el).find("input").val()
 
-appActivity.set({message:"parsing "+qv+"..."})
-// update appState.query with it
 appState.set({
 	query: qv
 })
@@ -61,9 +59,6 @@ return this
 },
 prequery: function(g) {
 
-		// var qv = $(this.el).find("#inputContainer input").val()
-
-		// appState.set({query:qv})
 
 		var qv = appState.get("query")
 
