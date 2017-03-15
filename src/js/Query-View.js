@@ -57,69 +57,69 @@ appState.set({
 })
 return this
 },
-prequery: function(g) {
+// prequery: function(g) {
 
 
-		var qv = appState.get("query")
+// 		var qv = appState.get("query")
 
-		switch (true) { //let's try to catch coordinate input
-		case (!isNaN(qv.split(",")[0]) && !isNaN(qv.split(",")[1]) && (qv.split(",").length > 2 && qv.split(",")[2].indexOf("m") > -1)):
-				var typ = "coords" //point with a 3rd param - radius in meters
-				break;
-				case (qv.split(",").length == 1):
-				var typ = "string"
-				break;
-				case (_.every(qv.split(","), function(c) {
-					return !isNaN(c)
-				})):
-				var typ = "coords" //poly
-				break;
-				default:
-				var typ = "string"
-			}
-
-
-		if (typ == "coords") { //if these are coordinates, we are gonna pass in quite a different object (e.g. not a nominatim geom but a custom)
-
-			triageCoordz.set({
-				coordzin: qv
-			})
-
-// we need to mutate into geojson (possibly buffering when necessary)
-var element = triageCoordz.as_choice()
+// 		switch (true) { //let's try to catch coordinate input
+// 		case (!isNaN(qv.split(",")[0]) && !isNaN(qv.split(",")[1]) && (qv.split(",").length > 2 && qv.split(",")[2].indexOf("m") > -1)):
+// 				var typ = "coords" //point with a 3rd param - radius in meters
+// 				break;
+// 				case (qv.split(",").length == 1):
+// 				var typ = "string"
+// 				break;
+// 				case (_.every(qv.split(","), function(c) {
+// 					return !isNaN(c)
+// 				})):
+// 				var typ = "coords" //poly
+// 				break;
+// 				default:
+// 				var typ = "string"
+// 			}
 
 
-triagePlaces.reset()
+// 		if (typ == "coords") { //if these are coordinates, we are gonna pass in quite a different object (e.g. not a nominatim geom but a custom)
 
-var llgodelement = element
-llgodelement.llgod_type = "aoi_custom"
-triagePlaces.push(llgodelement)
+// 			triageCoordz.set({
+// 				coordzin: qv
+// 			})
 
-
-
-return this
-} else {
+// // we need to mutate into geojson (possibly buffering when necessary)
+// var element = triageCoordz.as_choice()
 
 
-	var service_url = 'http://nominatim.openstreetmap.org/search.php?limit=5&format=jsonv2&q=' + qv;
-			// var solr_url = 'http://libgeo:8080/search.php?limit=5&format=jsonv2&q='+qv;
+// triagePlaces.reset()
 
-
-			triagePlaces.reset()
-
-			// TEMPORARY DISABLED SO WE DON'T HIT NOMINATIM TOO HARD DURING TESTING
-			if(Config.MODE!=="bus"){
-				$.getJSON(service_url, null, function(response) {
-					$.each(response, function(i, element) {
-						var llgodelement = element
-						llgodelement.llgod_type = "aoi_nom"
-						triagePlaces.push(llgodelement)
-					});
-				});}
+// var llgodelement = element
+// llgodelement.llgod_type = "aoi_custom"
+// triagePlaces.push(llgodelement)
 
 
 
-				return this
-		} //wasn't coords - we propogate the query string to nominatim and solr
-	}
+// return this
+// } else {
+
+
+// 	var service_url = 'http://nominatim.openstreetmap.org/search.php?limit=5&format=jsonv2&q=' + qv;
+// 			// var solr_url = 'http://libgeo:8080/search.php?limit=5&format=jsonv2&q='+qv;
+
+
+// 			triagePlaces.reset()
+
+// 			// TEMPORARY DISABLED SO WE DON'T HIT NOMINATIM TOO HARD DURING TESTING
+// 			if(Config.MODE!=="bus"){
+// 				$.getJSON(service_url, null, function(response) {
+// 					$.each(response, function(i, element) {
+// 						var llgodelement = element
+// 						llgodelement.llgod_type = "aoi_nom"
+// 						triagePlaces.push(llgodelement)
+// 					});
+// 				});}
+
+
+
+// 				return this
+// 		} //wasn't coords - we propogate the query string to nominatim and solr
+// 	}
 })

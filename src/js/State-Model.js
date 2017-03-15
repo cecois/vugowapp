@@ -11,6 +11,7 @@ var State = Backbone.Model.extend({
 		"query": "",
 		"active": null,
 		"dlex": "map",
+		"aoi": null,
 		"querytype": null
 	},
 	initialize: function(options) {
@@ -21,40 +22,40 @@ var State = Backbone.Model.extend({
 		return this
 	},
 	upbbox: function(){
-var bbx = map.getBounds().toBBoxString();
-if(this.get("bbox")!==bbx){
-	this.set({bbox:bbx})
-}
+		var bbx = map.getBounds().toBBoxString();
+		if(this.get("bbox")!==bbx){
+			this.set({bbox:bbx})
+		}
 
-return this
+		return this
 
 	},
 	toggle: function(which) {
 
-	var whi = (typeof which == 'undefined') ? "split" : which;
+		var whi = (typeof which == 'undefined') ? "split" : which;
 
-	switch (this.get("downout")) {
-		case "split":
-		wh = "out"
-		break;
-		case "down":
-		wh = "out"
-		break;
-		case null:
-		wh = 'nil'
-		break;
-		default:
-		wh = whi
-	}
+		switch (this.get("downout")) {
+			case "split":
+			wh = "out"
+			break;
+			case "down":
+			wh = "out"
+			break;
+			case null:
+			wh = 'nil'
+			break;
+			default:
+			wh = whi
+		}
 
-	this.set({
-		downout:
-		wh
-	})
+		this.set({
+			downout:
+			wh
+		})
 
-	return this
+		return this
 
-},
+	},
 	pullurl: function() {
 
 		var uslug = this.get("slug")
