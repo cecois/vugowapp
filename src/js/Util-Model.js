@@ -36,38 +36,38 @@ if(type !== 'count'){
 		return sql;
 	}
 },
-	boundstringFromNOMIN: function(bbox) {
+boundstringFromNOMIN: function(bbox) {
 
-		var bba = bbox
+	var bba = bbox
 
-		if (bba.length < 4) {
-			return "incomplete bbox submitted"
-		}
-
-
-		var s = bba[0]
-		var w = bba[2]
-		var e = bba[3]
-		var n = bba[1]
-
-		var bboxstring = w + "," + s + "," + e + "," + n
-
-		return bboxstring;
-
-	},
-	boundsArrFromBBOX: function(bboxstring){
-
-		var bba = bboxstring.split(",")
-
-		if (bba.length < 4) {
-			return "incomplete bbox submitted"
-		}
+	if (bba.length < 4) {
+		return "incomplete bbox submitted"
+	}
 
 
-		return [bba[0],bba[1],bba[2],bba[3]];
+	var s = bba[0]
+	var w = bba[2]
+	var e = bba[3]
+	var n = bba[1]
 
-	},
-	bbox2wkt: function(bbox){
+	var bboxstring = w + "," + s + "," + e + "," + n
+
+	return bboxstring;
+
+},
+boundsArrFromBBOX: function(bboxstring){
+
+	var bba = bboxstring.split(",")
+
+	if (bba.length < 4) {
+		return "incomplete bbox submitted"
+	}
+
+
+	return [bba[0],bba[1],bba[2],bba[3]];
+
+},
+bbox2wkt: function(bbox){
 // quite rudimentary stopgap (wicket wasn't working at the time) conversion of poly or point to wktL
 
 var coordarr = bbox.split(',')

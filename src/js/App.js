@@ -32,18 +32,18 @@ window.appStateView  = new StateView({model:appState})
 // POTENTIAL PLACES FROM EITHER NOMINATIM OR OUR OWN PARSING OF COORDS
 // window.triagePlaces = new TriageCollection();
 
-window.appAOI = new AOI();window.appAOIView  = new AOIView({model:appAOI})
+window.appAOI = new AOI();window.appAOIView  = new AOIView({model:appAOI});window.appAOIStatus  = new AOIStatus({model:appAOI})
 
 window.appQuery = new Query();window.appQueryView  = new QueryView({model:appQuery})
 // CLOUDMADE ET AL
 mapBaseLayers = new BaseLayersCollection(baselayerz.layers);
 
-    window.appBaseMapsMenuView = new BaseMapsMenuView({
-        collection: mapBaseLayers
-    });
-    window.mapBaseMapView = new BaseMapView({
-        collection: mapBaseLayers
-    });
+window.appBaseMapsMenuView = new BaseMapsMenuView({
+    collection: mapBaseLayers
+});
+window.mapBaseMapView = new BaseMapView({
+    collection: mapBaseLayers
+});
 
     // and a menu view for stylish swappin'
     // window.appBaseMapsMenuView = new BaseMapsMenuView({
@@ -60,4 +60,4 @@ mapBaseLayers = new BaseLayersCollection(baselayerz.layers);
 // appActivity = new Activity();
 // appActivityView = new ActivityView({
 //     model: appActivity
-// }); 
+// });
