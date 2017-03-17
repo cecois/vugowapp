@@ -3,9 +3,9 @@
 templates['AOIStatusTpl'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "<h4 style=\"color:orange;\">"
+  return "<!-- <input id=\"aoi-toggle\" type=\"checkbox\" data-toggle=\"toggle\" data-size=\"mini\" class=\"toggle\"  data-on=\"on\" data-off=\"off\"> -->\n<span\"><strong>DOWNLOAD CLIPS TO:</strong> "
     + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"type","hash":{},"data":data}) : helper)))
-    + "</h4>";
+    + "</span>";
 },"useData":true});
 templates['BaseMapsMenuViewTpl'] = template({"1":function(container,depth0,helpers,partials,data) {
     var alias1=container.lambda, alias2=container.escapeExpression;

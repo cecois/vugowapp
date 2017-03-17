@@ -6,15 +6,22 @@ var AOIView = Backbone.View.extend({
 		// "click #bt-query": "execute_by_click"
 	},
 	initialize: function() {
-		this.render()
+		groupAOI = L.featureGroup().addTo(map).bringToFront();
+		// this.render()
 		// this.model.bind("change:query", this.render, this)
 		// this.listenTo(appState, 'change:query', this.prequery);
-		this.listenTo(this.model, 'change', this.render);
+		this.listenTo(this.model, 'change:aoi', this.render);
 		return this
 	},
 	render: function() {
+		groupAOI.clearLayers();
 		// $(this.el).html(this.template(this.model.toJSON()))
-		console.log("AOIv.17:"); console.log(this.model);
-		return this
-	}
-})
+		if(this.model.get("aoi")!==null){
+
+			L.geoJSON(this.model.get("aoi"), {
+				style: UTIL.get_style("aoi")
+			}).addTo(groupAOI);}
+			map.fitBounds(groupAOI.getBounds())
+			return this
+		}
+	})

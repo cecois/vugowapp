@@ -31,9 +31,9 @@ var AOI = Backbone.Model.extend({
 		var ascoo = _.map(aoistring.split(","), function(c){ return parseFloat(c); }); // bust it open on commas and cast em to numbers
 
 		switch (true) {
-			case (aoistring=="*:*"):
-atype="can't process an AOI with *:*"; // if its "*:*" theres nothing aoi can do with that
-break;
+// 			case (aoistring=="*:*"):
+// type="visible map extent"; // if its "*:*" theres nothing aoi can do with that
+// break;
 case (/[a-z]/i.test(aoistring)):
 atype="not coordinates!";
 break;
@@ -42,16 +42,15 @@ atype="bbox";
 geom = turf.bboxPolygon(ascoo);
 break;
 case (ascoo.length==2 && _.every(ascoo, function(c) { return isNaN(parseFloat(c))==false; })==true):
-atype="pair";
+atype="coordinate pair (buffered by "+Config.POINTBUFFER+" meters)";
 var center = turf.point(ascoo);
-var radius = 5;
+var radius = Config.POINTBUFFER;
 var steps = 33;
-var units = 'kilometers';
+var units = 'meters';
 geom = turf.circle(center, radius, steps, units);
-console.log("geom:"); console.log(geom);
 break;
 default:
-type=null
+atype="visible map extent"
 }
 
 // geom = this.geofy()
@@ -60,7 +59,6 @@ type=null
 // if its a coord pair we'll turfjs it and buffer it
 // if its a coord array of 4+ we'll turfjs it
 // if its a string we'll send it to triagePlaces, which will query [nominatim] for a renderable geom
-console.log("geom.62:"); console.log(geom);
 this.set({type:atype,aoi:geom})
 
 return this

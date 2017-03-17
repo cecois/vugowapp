@@ -1,6 +1,6 @@
 var Config={
 	"MODE":"apt",
-	"POINTBUFFER":500,
+	"POINTBUFFER":10000, // in meters
 	"APIKEY":0,
 	"SOLRROOT":"http://localhost:8080/solr/biblio/",
 	"POLYOPACITY":.85,
