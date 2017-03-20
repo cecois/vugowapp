@@ -14,10 +14,10 @@ var AOIView = Backbone.View.extend({
 		return this
 	},
 	render: function() {
-		groupAOI.clearLayers();
 		// $(this.el).html(this.template(this.model.toJSON()))
-		if(this.model.get("aoi")!==null){
+		if(this.model.get("aoi")!==null && (this.model.get("type")=='point' || this.model.get("type")=='bbox') ){
 
+			groupAOI.clearLayers();
 			L.geoJSON(this.model.get("aoi"), {
 				style: UTIL.get_style("aoi")
 			}).addTo(groupAOI);}

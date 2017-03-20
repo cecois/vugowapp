@@ -1,7 +1,7 @@
 var AOI = Backbone.Model.extend({
 	defaults: {
 		active: false
-		,type:null
+		,type:'map'
 		,aoi:null
 	},
 	initialize: function() {
@@ -20,29 +20,37 @@ var AOI = Backbone.Model.extend({
 	}
 	,detect: function(){
 
-		var aoistring = (typeof appState.get("aoi") !== 'undefined' && appState.get("aoi") !== null && appState.get("aoi") !== 'null')?appState.get("aoi"):appState.get("query");
+/*
 
-		// console.log("in detect, aoistring:")
-		// console.log(aoistring)
+we wanna pull either the aoi or query value from appstate, sniff what it is (string vs. bbox array vs. coordinate pair, etc) and then set the AOI with it (when applicable) [type and geometry];
 
-		var atype = null;
-		var geom = null;
-		// var ascoo = aoistring.split(",") // bust it open on commas
-		var ascoo = _.map(aoistring.split(","), function(c){ return parseFloat(c); }); // bust it open on commas and cast em to numbers
+if it's a string we shop it to a service (currently nominatim) via the triagePlaces collx/view to see if we can get the geom there - could be it's not a location string but a data query but who cares, amiright?
+
+	*/
+
+var aoistring = (typeof appState.get("aoi") !== 'undefined' && appState.get("aoi") !== null && appState.get("aoi") !== 'null')?appState.get("aoi"):appState.get("query");
+
+var atype = null;
+var geom = null;
+
+
+		var ascoo = (typeof aoistring !== 'undefined')? _.map(aoistring.split(","), function(c){ return parseFloat(c); }) : ''; // bust it open on commas and cast em to numbers
 
 		switch (true) {
-// 			case (aoistring=="*:*"):
-// type="visible map extent"; // if its "*:*" theres nothing aoi can do with that
-// break;
+
+// BTDUBZ: if an AOI was previously set (the [not great] test is whether groupAOI is on) we wanna keep it until it's explicitly removed
 case (/[a-z]/i.test(aoistring)):
-atype="not coordinates!";
+// if its a string we'll send it to triagePlaces, which will query [nominatim] for a renderable geom
+atype="string";
 break;
 case (ascoo.length==4 && _.every(ascoo, function(c) { return isNaN(parseFloat(c))==false; })==true):
+// if its a coord array of 4+ we'll turfjs it
 atype="bbox";
 geom = turf.bboxPolygon(ascoo);
 break;
 case (ascoo.length==2 && _.every(ascoo, function(c) { return isNaN(parseFloat(c))==false; })==true):
-atype="coordinate pair (buffered by "+Config.POINTBUFFER+" meters)";
+// if its a coord pair we'll turfjs it and buffer it
+atype="point";
 var center = turf.point(ascoo);
 var radius = Config.POINTBUFFER;
 var steps = 33;
@@ -50,16 +58,13 @@ var units = 'meters';
 geom = turf.circle(center, radius, steps, units);
 break;
 default:
-atype="visible map extent"
+atype="map"
 }
 
-// geom = this.geofy()
-
-// console.log("after some work [nominatim and/or turf prolly] we can set aoi.type and aoi.aoi here, view will trigger and render")
-// if its a coord pair we'll turfjs it and buffer it
-// if its a coord array of 4+ we'll turfjs it
-// if its a string we'll send it to triagePlaces, which will query [nominatim] for a renderable geom
-this.set({type:atype,aoi:geom})
+// only if things have changed
+if((atype=='point'||atype=='bbox') && (this.get("aoi")!==geom)){
+	this.set({type:atype,aoi:geom})
+}
 
 return this
 }

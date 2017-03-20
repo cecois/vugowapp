@@ -4,7 +4,7 @@ templates['AOIStatusTpl'] = template({"compiler":[7,">= 4.0.0"],"main":function(
     var helper;
 
   return "<!-- <input id=\"aoi-toggle\" type=\"checkbox\" data-toggle=\"toggle\" data-size=\"mini\" class=\"toggle\"  data-on=\"on\" data-off=\"off\"> -->\n<span\"><strong>DOWNLOAD CLIPS TO:</strong> "
-    + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"type","hash":{},"data":data}) : helper)))
+    + container.escapeExpression(((helper = (helper = helpers.type_display || (depth0 != null ? depth0.type_display : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"type_display","hash":{},"data":data}) : helper)))
     + "</span>";
 },"useData":true});
 templates['BaseMapsMenuViewTpl'] = template({"1":function(container,depth0,helpers,partials,data) {

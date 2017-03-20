@@ -8,10 +8,30 @@ var AOIStatus = Backbone.View.extend({
 	initialize: function() {
 		// this.model.bind("change:query", this.render, this)
 		// this.listenTo(appState, 'change:query', this.prequery);
-		this.listenTo(this.model, 'change', this.render);
-		this.render()
+		this.listenTo(this.model, 'change', this.prerender);
+		this.prerender()
 		return this
-	},
+	}
+	,prerender(){
+
+		var t = this.model.get("type")
+		var typ = null;
+		switch (t) {
+			case "point":
+			this.model.set({type_display:"coordinate pair (buffered by "+Config.POINTBUFFER+" meters)"});
+			break;
+
+			case "bbox":
+			this.model.set({type_display:"bounding box parsed as W,S,E,N"});
+			break;
+			default:
+			this.model.set({type_display:"visible map extent"});
+		}
+
+		return this
+		.render()
+
+	}
 	// toggle: function(){
 
 	// 	if(map.hasLayer(groupAOI)==true){
@@ -39,7 +59,7 @@ var AOIStatus = Backbone.View.extend({
 // return this
 
 // },
-render: function() {
+,render: function() {
 	$(this.el).html(this.template(this.model.toJSON()))
 		// console.log("AOIv.17:"); console.log(this.model);
 		return this
