@@ -23,8 +23,8 @@ window.appPanelMenuView = new PanelMenuView({collection:appPanels});
 // MANAGES PANECONTAINERS FOR ONE THING
 window.appStateView  = new StateView({model:appState})
 
-// POTENTIAL PLACES FROM EITHER NOMINATIM OR OUR OWN PARSING OF COORDS
-// window.triagePlaces = new TriageCollection();
+// POTENTIAL PLACES FROM SERVICE (NOMINATIM)
+window.triagePlaces = new TriageCollection();
 
 
 window.appQuery = new Query();window.appQueryView  = new QueryView({model:appQuery})
