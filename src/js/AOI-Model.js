@@ -6,7 +6,7 @@ var AOI = Backbone.Model.extend({
 	},
 	initialize: function() {
 		this.listenTo(appState, 'change:query', this.detect);
-		this.listenTo(appState, 'change:aoi', this.detect);
+		// this.listenTo(appState, 'change:aoi', this.detect);
 		// this.listenTo(this, 'change:type', this.geofy);
 	}
 	,geofy: function(){

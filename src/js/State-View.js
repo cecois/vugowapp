@@ -2,31 +2,41 @@ var StateView = Backbone.View.extend({
 
 	el: $("body"),
 	events: {
-		"click #paneToggler-split": "downout",
-		"click #paneToggler-down": "downout"
+		"click #paneToggler-split": "downout"
+		,"click #paneToggler-down": "downout"
+		,"keydown": "downout"
 	},
 	initialize: function() {
 		this.listenTo(this.model, 'change', this.render)
 			// this.listenTo(map, 'moveend', this.bboxup);
 			return this
-		},
-		downout: function(e) {
+		}
+		,downout: function(e) {
 
-			e.preventDefault();
+			if(e.type=="keydown" && e.keyCode == 17){
+				e.preventDefault();
+				var w = (appState.get("downout")=="split")?"out":"split";
+				appState.set({downout:w})
+			} else if(e.type=="keydown" && e.keyCode == 18){
+				e.preventDefault();
+				var w = (appState.get("downout")=="down")?"out":"down";
+				appState.set({downout:w})
+			} else {
 
-			var target = $(e.currentTarget).attr("id").split("-")[1]
+
+				var target = $(e.currentTarget).attr("id").split("-")[1]
 
 // override if the same state was requested (in effect resetting)
 if(this.model.get("downout")==target){
 	target = "out"
 }
 
-			// this.model.toggle("split")
-			this.model.set({downout:target})
+this.model.set({downout:target})
 
-			return this
+		} //type
+		return this
 
-		},
+	}
 		// bboxup: function() {
 
 		// 	var bbox = map.getBounds().toBBoxString()
@@ -43,7 +53,7 @@ if(this.model.get("downout")==target){
 		// 	return this
 
 		// },
-		render: function(a) {
+		,render: function(a) {
 
 			switch (this.model.get("downout")) {
 				case "down":
@@ -76,10 +86,10 @@ if(this.model.get("downout")==target){
 				$(".hit-wrapper").removeClass('split'); //gross but bootstrap responsive didn't work on these manual resizes
 			}
 
-		$(document).attr("title", "Vugo Web App: " + appState.get("slug"));
+			$(document).attr("title", "Vugo Web App: " + appState.get("slug"));
 
-		return this
+			return this
 
-	}
+		}
 
-});
+	});
